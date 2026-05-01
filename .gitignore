@@ -1,0 +1,38 @@
+# ─────────────────────────────────────────
+# Vite & Gourmand — Git ignore configuration
+# ─────────────────────────────────────────
+
+# Environment variables (passwords, API keys)
+.env
+.env.local
+
+# Composer dependencies (only the folder, not the lock file)
+vendor/
+
+# Node modules (if used)
+node_modules/
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# IDE settings
+.vscode/
+!.vscode/settings.json
+.idea/
+# Cache (ignore .cache directory; add '*.cache' if you want to ignore cache files as well)
+.cache/
+.cache/
+
+# User uploads (keep folder structure)
+src/public/assets/uploads/**
+!src/public/assets/uploads/.gitkeep
+
+# Build artifacts
+dist/
+build/
