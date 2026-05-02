@@ -1,0 +1,169 @@
+@startuml "Vite & Gourmand - UC"
+
+' ─────────────────────────────────────────────────────────────
+' VITE & GOURMAND COLOR PALETTE
+' ─────────────────────────────────────────────────────────────
+skinparam backgroundColor #F9F9F7
+
+skinparam package {
+  BackgroundColor #F0F5F1
+  BorderColor     #063A1F
+  FontColor       #063A1F
+  FontSize        13
+  FontStyle       bold
+}
+
+skinparam actor {
+  BackgroundColor #D4AF37
+  BorderColor     #063A1F
+  FontColor       #063A1F
+  FontSize        12
+  FontStyle       bold
+}
+
+skinparam usecase {
+  BackgroundColor inherit
+  BorderColor     #800020
+  FontColor       #063A1F
+  FontSize        12
+  FontStyle       bold
+  ArrowColor      #063A1F
+}
+
+left to right direction
+
+' ─────────────────────────────────────────────────────────────
+' ACTORS
+' ─────────────────────────────────────────────────────────────
+actor "Visiteur"       as V
+actor "Utilisateur"    as U
+actor "Employé"        as E
+actor "Administrateur" as A
+
+' ─────────────────────────────────────────────────────────────
+' ACTORS INHERITANCE
+' Convention UML: child actor points to parent actor
+' Visiteur is the base actor, Administrator is the most specialized
+' ─────────────────────────────────────────────────────────────
+U --|> V
+E --|> U
+A --|> E
+
+' ─────────────────────────────────────────────────────────────
+' USE CASES
+' ─────────────────────────────────────────────────────────────
+package "Application Vite & Gourmand" {
+
+  ' ── Public navigation ──
+  usecase "Consulter les menus\n& filtres"        as UC1
+  usecase "Consulter le détail\nd'un menu"        as UC2
+  usecase "Contacter l'entreprise"                as UC3
+  usecase "Consulter les CGV\n& Mentions légales" as UC4
+
+  ' ── Authentication ──
+  usecase "S'inscrire"                     as UC5
+  usecase "Se connecter"                   as UC6
+  usecase "Réinitialiser\nle mot de passe" as UC7
+  usecase "Se déconnecter"                 as UC8
+
+  ' ── User space ──
+  usecase "Passer une commande"              as UC9
+  usecase "Modifier une commande"            as UC10
+  usecase "Annuler une commande"             as UC11
+  usecase "Suivre ses commandes"             as UC12
+  usecase "Laisser un avis"                  as UC13
+  usecase "Modifier ses infos\npersonnelles" as UC14
+
+  ' ── Employee space ──
+  usecase "Gérer les menus\n(CRUD)"              as UC15
+  usecase "Gérer les plats\n(CRUD)"              as UC16
+  usecase "Gérer les horaires"                   as UC17
+  usecase "Gérer les statuts\nde commande"       as UC18
+  usecase "Annuler une commande (par employé)"   as UC19
+  usecase "Filtrer les commandes"                as UC20
+  usecase "Valider / Refuser\nun avis"           as UC21
+
+  ' ── Administrator space ──
+  usecase "Créer un compte\nemployé"          as UC22
+  usecase "Désactiver un compte\nemployé"     as UC23
+  usecase "Consulter les statistiques"        as UC24
+  usecase "Consulter le CA\npar menu/période" as UC25
+
+  ' ── Eco-responsible vision ──
+  usecase "Consulter la page RSE"                  as UC26
+  usecase "Consulter les certifications"           as UC27
+  usecase "Consulter les partenaires"              as UC28
+  usecase "Consulter l'expertise\nde l'équipe"     as UC29
+  usecase "Consulter les offres\nanti-gaspillage"  as UC30
+  usecase "Commander une offre\nanti-gaspillage"   as UC31
+  usecase "S'abonner aux alertes\nanti-gaspillage" as UC32
+  usecase "Gérer les offres\nanti-gaspillage"      as UC33
+  usecase "Gérer le contenu RSE"                   as UC34
+  usecase "Gérer les certifications"               as UC35
+  usecase "Gérer les partenaires"                  as UC36
+  usecase "Gérer la page équipe"                   as UC37
+}
+
+' ─────────────────────────────────────────────────────────────
+' VISITOR ASSOCIATIONS
+' ─────────────────────────────────────────────────────────────
+V --> UC1
+V --> UC2
+V --> UC3
+V --> UC4
+V --> UC5
+V --> UC6
+V --> UC7
+V --> UC26
+V --> UC27
+V --> UC28
+V --> UC29
+V --> UC30
+
+' ─────────────────────────────────────────────────────────────
+' USER ASSOCIATIONS
+' ─────────────────────────────────────────────────────────────
+U --> UC8
+U --> UC9
+U --> UC10
+U --> UC11
+U --> UC12
+U --> UC13
+U --> UC14
+U --> UC31
+U --> UC32
+
+' ─────────────────────────────────────────────────────────────
+' EMPLOYEE ASSOCIATIONS
+' ─────────────────────────────────────────────────────────────
+E --> UC15
+E --> UC16
+E --> UC17
+E --> UC18
+E --> UC19
+E --> UC20
+E --> UC21
+E --> UC33
+E --> UC36
+E --> UC37
+
+' ─────────────────────────────────────────────────────────────
+' ADMINISTRATOR ASSOCIATIONS
+' ─────────────────────────────────────────────────────────────
+A --> UC22
+A --> UC23
+A --> UC24
+A --> UC25
+A --> UC34
+A --> UC35
+
+' ─────────────────────────────────────────────────────────────
+' INCLUDE / EXTEND RELATIONSHIPS
+' UC9/UC31 <<extend>> UC6: connection required only if not logged in
+' UC7 <<include>> UC6: password reset always includes login
+' ─────────────────────────────────────────────────────────────
+UC9  ..> UC6 : <<extend>>\n[si non connecté]
+UC31 ..> UC6 : <<extend>>\n[si non connecté]
+UC7  ..> UC6 : <<include>>
+
+@enduml
