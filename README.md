@@ -5,6 +5,27 @@
 Application de commande de menus traiteur événementiel pour l'entreprise Vite & Gourmand (Bordeaux).
 Engagement éco-responsable, anti-gaspillage, partenaires locaux.
 
+![Status](https://img.shields.io/badge/status-in%20development-orange)
+![PHP](https://img.shields.io/badge/PHP-8.3-777BB4?logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.4-4479A1?logo=mysql&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-8-47A248?logo=mongodb&logoColor=white)
+![License](https://img.shields.io/badge/license-Educational-blue)
+
+Application de commande de menus traiteur événementiel pour l'entreprise Vite & Gourmand (Bordeaux).
+Engagement éco-responsable, anti-gaspillage, partenaires locaux.
+
+---
+
+## 📋 Table of contents
+
+- [Tech stack](#-tech-stack)
+- [Local installation](#-local-installation)
+- [Test credentials](#-test-credentials)
+- [Documentation](#-documentation)
+- [Eco-responsible vision](#-eco-responsible-vision)
+- [Project links](#-project-links)
+- [Author](#-author)
+
 ---
 
 ## 🚀 Tech stack
@@ -20,19 +41,29 @@ Engagement éco-responsable, anti-gaspillage, partenaires locaux.
 | Deployment         | fly.io                                  |
 | Project management | Notion                                  |
 | Design             | Figma                                   |
+| UML diagrams       | PlantUML                                |
+| Versioning         | Git + GitHub                            |
 
 ---
 
 ## 📦 Local installation
 
-```bash
+\```bash
+# Clone the repository
 git clone https://github.com/Biba-Com/vite-et-gourmand.git
 cd vite-et-gourmand
+
+# Install PHP dependencies
 composer install
+
+# Configure environment variables
 cp .env.example .env
+# Then edit .env with your local credentials
+
+# Initialize the database
 mysql -u root -p < database/create.sql
 mysql -u root -p < database/fixtures.sql
-```
+\```
 
 ---
 
@@ -48,23 +79,42 @@ mysql -u root -p < database/fixtures.sql
 
 ## 📐 Documentation
 
+### MVC Architecture
+
+The application follows the Model-View-Controller design pattern, ensuring clean separation of concerns.
+
+![MVC Architecture](docs/uml/exports/MVC%20Architecture%20-%20Vite%20%26%20Gourmand.png)
+
+📄 [PlantUML source](docs/uml/architecture-mvc.puml)
+
 ### Use case diagram
+
+37 use cases distributed across 4 actors with inheritance (Visiteur → Utilisateur → Employé → Administrateur).
+
+![Use Case Diagram](docs/uml/exports/Vite%20%26%20Gourmand%20-%20UC.png)
+
+📄 [PlantUML source](docs/uml/usecase.puml)
+
+### Sequence diagram
+*(coming soon — order workflow)*
+
+### Class diagram
 *(coming soon)*
 
-### Database model
-*(coming soon — Mermaid ERD)*
+### Database model (MCD / ERD)
+*(coming soon — Merise notation + Mermaid ERD)*
 
 ---
 
 ## 🌱 Eco-responsible vision
 
-This application includes special features beyond the standard catering scope:
+This application includes features beyond the standard catering scope to support sustainability:
 
-- **RSE page** — environmental commitments
+- **RSE page** — environmental commitments and carbon footprint
 - **Certifications** — organic and eco-friendly labels
 - **Local partners** — short-circuit suppliers
-- **Anti-waste offers** — discounted menus
-- **Eco badges** on each menu
+- **Anti-waste offers** — discounted menus to reduce food waste
+- **Eco badges** on each menu (local, zero-waste, vegetarian)
 
 ---
 
@@ -73,6 +123,29 @@ This application includes special features beyond the standard catering scope:
 - 🌐 Live application: *(coming soon)*
 - 📋 Notion project board: *(coming soon)*
 - 🎨 Figma mockups: *(coming soon)*
+
+---
+
+## 📁 Project structure
+
+\```
+vite-et-gourmand/
+├── database/                # SQL scripts (create.sql, fixtures.sql)
+├── docs/
+│   ├── maquettes/           # Figma exports
+│   └── uml/                 # PlantUML diagrams
+│       └── exports/         # PNG/SVG outputs
+├── src/
+│   ├── config/              # DB connection, constants
+│   ├── controllers/         # MVC — business logic
+│   ├── models/              # MVC — database access
+│   ├── views/               # MVC — HTML/PHP templates
+│   ├── utils/               # Helper functions
+│   └── public/              # Web entry point + assets
+├── .env.example             # Environment variables template
+├── .gitignore
+└── README.md
+\```
 
 ---
 
