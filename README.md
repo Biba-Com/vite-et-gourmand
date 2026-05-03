@@ -107,7 +107,19 @@ Detailed workflow for placing a multi-service order, including server-side secur
 📄 [PlantUML source](docs/uml/sequence-commande.puml)
 
 ### Class diagram
-*(coming soon)*
+
+Complete application architecture with 29 classes organized into 7 modules:
+1. **Users & Authentication** — User, Session, PasswordResetToken
+2. **Catalog** — Menu, Dish, Service, Allergen, Theme, Diet, EcoBadge
+3. **Orders** — Order, OrderItem, DistanceCache
+4. **Reviews** — Review with moderation workflow
+5. **Eco-responsible vision** — AntiWasteOffer, Partner, Certification, AlertSubscription
+6. **System** — TeamMember, OpeningHours, RseContent
+7. **Audit & Traceability** — OrderStatusHistory, ContactMessage, EmailLog, Notification, AuditLog
+
+![Class Diagram](docs/uml/exports/Vite%20%26%20Gourmand%20-%20Class%20Diagram.png)
+
+📄 [PlantUML source](docs/uml/classe.puml)
 
 ### Database model (MCD / ERD)
 *(coming soon — Merise notation + Mermaid ERD)*
