@@ -1,0 +1,552 @@
+@startuml "Vite & Gourmand - Class Diagram"
+
+' ─────────────────────────────────────────────────────────────
+' VITE & GOURMAND COLOR PALETTE
+' ─────────────────────────────────────────────────────────────
+skinparam backgroundColor #F9F9F7
+
+skinparam class {
+  BackgroundColor #F0F5F1
+  BorderColor     #063A1F
+  FontColor       #063A1F
+  FontSize        11
+  HeaderBackgroundColor #063A1F
+  HeaderFontColor #FFFFFF
+  AttributeFontColor #063A1F
+  AttributeFontSize 10
+  ArrowColor      #800020
+}
+
+skinparam package {
+  BackgroundColor #FFFEF8
+  BorderColor     #D4AF37
+  FontColor       #063A1F
+  FontSize        13
+  FontStyle       bold
+}
+
+skinparam note {
+  BackgroundColor #FFFEF0
+  BorderColor     #D4AF37
+  FontColor       #063A1F
+}
+
+title Class Diagram — Vite & Gourmand\nFull application architecture (24 classes)
+
+' ─────────────────────────────────────────────────────────────
+' MODULE 1 — AUTHENTICATION & USERS
+' ─────────────────────────────────────────────────────────────
+package "Module 1 — Users & Authentication" #F0F5F1 {
+
+  class User {
+    - id: int <<PK>>
+    - email: string <<UNIQUE>>
+    - password_hash: string
+    - first_name: string
+    - last_name: string
+    - phone: string
+    - address: string
+    - city: string
+    - role: enum <<visitor, client, employee, admin>>
+    - is_active: boolean
+    - email_verified_at: datetime
+    - created_at: datetime
+    - updated_at: datetime
+    - deleted_at: datetime <<nullable>>
+    --
+    + register(data: array): User
+    + login(email, password): bool
+    + logout(): void
+    + verifyEmail(token): bool
+    + resetPassword(token, newPassword): bool
+    + updateProfile(data): bool
+    + hasRole(role): bool
+    + isActive(): bool
+  }
+
+  class Session {
+    - id: string <<PK>>
+    - user_id: int <<FK>>
+    - csrf_token: string
+    - ip_address: string
+    - user_agent: string
+    - last_activity: datetime
+    - created_at: datetime
+    --
+    + start(user): Session
+    + verify(token): bool
+    + destroy(): void
+    + isExpired(): bool
+  }
+
+  class PasswordResetToken {
+    - id: int <<PK>>
+    - user_id: int <<FK>>
+    - token_hash: string
+    - expires_at: datetime
+    - used_at: datetime <<nullable>>
+    --
+    + generate(user): string
+    + verify(token): User
+    + markAsUsed(): void
+  }
+}
+
+' ─────────────────────────────────────────────────────────────
+' MODULE 2 — CATALOG (MENUS, DISHES, SERVICES)
+' ─────────────────────────────────────────────────────────────
+package "Module 2 — Catalog" #F0F5F1 {
+
+  class Menu {
+    - id: int <<PK>>
+    - title: string
+    - description: text
+    - price_per_person: decimal(8,2)
+    - min_persons: int
+    - max_persons: int
+    - image_url: string
+    - theme_id: int <<FK>>
+    - is_active: boolean
+    - created_at: datetime
+    - updated_at: datetime
+    --
+    + getAll(filters): Menu[]
+    + getById(id): Menu
+    + create(data): Menu
+    + update(data): bool
+    + delete(): bool
+    + getDishes(): Dish[]
+    + getDiets(): Diet[]
+    + getEcoBadges(): EcoBadge[]
+    + isAvailable(date): bool
+    + calculatePrice(persons): decimal
+  }
+
+  class Dish {
+    - id: int <<PK>>
+    - name: string
+    - description: text
+    - category: enum <<starter, main, dessert, drink>>
+    - image_url: string
+    - is_active: boolean
+    - created_at: datetime
+    - updated_at: datetime
+    --
+    + getAll(): Dish[]
+    + create(data): Dish
+    + update(data): bool
+    + delete(): bool
+    + getAllergens(): Allergen[]
+  }
+
+  class Allergen {
+    - id: int <<PK>>
+    - name: string
+    - icon: string
+    --
+    + getAll(): Allergen[]
+  }
+
+  class Theme {
+    - id: int <<PK>>
+    - name: string
+    - description: text
+    - color: string
+    --
+    + getAll(): Theme[]
+  }
+
+  class Diet {
+    - id: int <<PK>>
+    - name: string
+    - description: text
+    --
+    + getAll(): Diet[]
+  }
+
+  class Service {
+    - id: int <<PK>>
+    - name: string
+    - description: text
+    - category: enum <<staff, equipment, drinks, supplement>>
+    - base_price: decimal(8,2)
+    - pricing_unit: enum <<per_person, per_hour, per_unit, flat_rate>>
+    - is_active: boolean
+    - created_at: datetime
+    --
+    + getAll(): Service[]
+    + getByCategory(category): Service[]
+    + calculatePrice(quantity, persons): decimal
+  }
+
+  class MenuComposition {
+    - menu_id: int <<FK, PK>>
+    - dish_id: int <<FK, PK>>
+    - quantity: int
+    - display_order: int
+    --
+    + addDishToMenu(menu, dish): bool
+    + removeDishFromMenu(menu, dish): bool
+  }
+
+  class DishAllergen {
+    - dish_id: int <<FK, PK>>
+    - allergen_id: int <<FK, PK>>
+    --
+    + getAllergensByDish(dish): Allergen[]
+  }
+}
+
+' ─────────────────────────────────────────────────────────────
+' MODULE 3 — ORDERS & QUOTING
+' ─────────────────────────────────────────────────────────────
+package "Module 3 — Orders" #F0F5F1 {
+
+  class Order {
+    - id: int <<PK>>
+    - user_id: int <<FK>>
+    - event_date: datetime
+    - delivery_address: string
+    - delivery_city: string
+    - delivery_distance_km: decimal(6,2)
+    - persons_count: int
+    - subtotal: decimal(10,2)
+    - discount_amount: decimal(10,2)
+    - delivery_fee: decimal(8,2)
+    - total: decimal(10,2)
+    - status: enum <<pending, confirmed, in_preparation, in_delivery, completed, cancelled>>
+    - cancellation_reason: text <<nullable>>
+    - cancelled_by_user_id: int <<FK, nullable>>
+    - cancelled_at: datetime <<nullable>>
+    - created_at: datetime
+    - updated_at: datetime
+    --
+    + create(orderData): Order
+    + calculateTotal(): decimal
+    + applyDiscount(): bool
+    + updateStatus(newStatus): bool
+    + cancel(reason, byUser): bool
+    + getItems(): OrderItem[]
+    + sendConfirmationEmail(): bool
+    + isAvailable(date): bool
+  }
+
+  class OrderItem {
+    - id: int <<PK>>
+    - order_id: int <<FK>>
+    - item_type: enum <<menu, service>>
+    - reference_id: int <<polymorphic FK>>
+    - quantity: int
+    - duration_hours: int <<nullable>>
+    - unit_price: decimal(8,2)
+    - subtotal: decimal(10,2)
+    - notes: text <<nullable>>
+    --
+    + create(orderId, data): OrderItem
+    + calculateSubtotal(): decimal
+    + getReference(): Menu|Service
+  }
+
+  class DistanceCache {
+    - id: int <<PK>>
+    - city: string <<UNIQUE>>
+    - distance_km: decimal(6,2)
+    - cached_at: datetime
+    - expires_at: datetime
+    --
+    + get(city): decimal
+    + set(city, distance): void
+    + isExpired(city): bool
+    + refresh(city): decimal
+  }
+}
+
+' ─────────────────────────────────────────────────────────────
+' MODULE 4 — REVIEWS
+' ─────────────────────────────────────────────────────────────
+package "Module 4 — Reviews" #F0F5F1 {
+
+  class Review {
+    - id: int <<PK>>
+    - user_id: int <<FK>>
+    - order_id: int <<FK>>
+    - rating: int <<1-5>>
+    - comment: text
+    - status: enum <<pending, approved, rejected>>
+    - moderated_by_user_id: int <<FK, nullable>>
+    - moderated_at: datetime <<nullable>>
+    - moderation_reason: text <<nullable>>
+    - created_at: datetime
+    --
+    + create(orderId, rating, comment): Review
+    + approve(employee): bool
+    + reject(employee, reason): bool
+    + getApproved(): Review[]
+    + getPending(): Review[]
+  }
+}
+
+' ─────────────────────────────────────────────────────────────
+' MODULE 5 — ECO-RESPONSIBLE VISION
+' ─────────────────────────────────────────────────────────────
+package "Module 5 — Eco-responsible Vision" #F0F5F1 {
+
+  class EcoBadge {
+    - id: int <<PK>>
+    - name: string
+    - description: text
+    - icon: string
+    - color: string
+    --
+    + getAll(): EcoBadge[]
+    + getMenusByBadge(badge): Menu[]
+  }
+
+  class AntiWasteOffer {
+    - id: int <<PK>>
+    - menu_id: int <<FK>>
+    - title: string
+    - description: text
+    - original_price: decimal(8,2)
+    - discounted_price: decimal(8,2)
+    - quantity_available: int
+    - available_until: datetime
+    - is_active: boolean
+    - created_at: datetime
+    --
+    + getActive(): AntiWasteOffer[]
+    + create(data): AntiWasteOffer
+    + reserve(): bool
+    + isAvailable(): bool
+  }
+
+  class AlertSubscription {
+    - id: int <<PK>>
+    - user_id: int <<FK>>
+    - alert_type: enum <<anti_waste, new_menu, special_offer>>
+    - is_active: boolean
+    - created_at: datetime
+    --
+    + subscribe(user, type): AlertSubscription
+    + unsubscribe(): bool
+    + notifySubscribers(type, data): int
+  }
+
+  class Certification {
+    - id: int <<PK>>
+    - name: string
+    - description: text
+    - logo_url: string
+    - issued_by: string
+    - validity_date: date
+    - is_active: boolean
+    --
+    + getAll(): Certification[]
+    + create(data): Certification
+  }
+
+  class Partner {
+    - id: int <<PK>>
+    - name: string
+    - description: text
+    - logo_url: string
+    - website_url: string
+    - category: enum <<supplier, certifier, sponsor>>
+    - is_active: boolean
+    --
+    + getAll(): Partner[]
+    + create(data): Partner
+  }
+}
+
+' ─────────────────────────────────────────────────────────────
+' MODULE 6 — SYSTEM & CONFIGURATION
+' ─────────────────────────────────────────────────────────────
+package "Module 6 — System" #F0F5F1 {
+
+  class TeamMember {
+    - id: int <<PK>>
+    - first_name: string
+    - last_name: string
+    - position: string
+    - bio: text
+    - photo_url: string
+    - display_order: int
+    - is_active: boolean
+    --
+    + getAll(): TeamMember[]
+    + create(data): TeamMember
+  }
+
+  class OpeningHours {
+    - id: int <<PK>>
+    - day_of_week: enum <<monday, tuesday, ..., sunday>>
+    - open_time: time
+    - close_time: time
+    - is_closed: boolean
+    - special_date: date <<nullable>>
+    - notes: string
+    --
+    + getAll(): OpeningHours[]
+    + getForDay(day): OpeningHours
+    + isOpen(datetime): bool
+  }
+
+  class RseContent {
+    - id: int <<PK>>
+    - section_key: string <<UNIQUE>>
+    - title: string
+    - content: text
+    - image_url: string
+    - display_order: int
+    - updated_by_user_id: int <<FK>>
+    - updated_at: datetime
+    --
+    + getBySection(key): RseContent
+    + update(key, data): bool
+  }
+}
+
+' ─────────────────────────────────────────────────────────────
+' RELATIONSHIPS
+' ─────────────────────────────────────────────────────────────
+
+' User relationships
+User "1" --o "0..*" Session : owns
+User "1" --o "0..*" PasswordResetToken : has
+User "1" --o "0..*" Order : places
+User "1" --o "0..*" Review : writes
+User "1" --o "0..*" AlertSubscription : subscribes
+
+' Catalog relationships
+Menu "*" --o "1" Theme : has theme
+Menu "*" o--o "*" Dish : composed of
+(Menu, Dish) .. MenuComposition
+
+Dish "*" o--o "*" Allergen : contains
+(Dish, Allergen) .. DishAllergen
+
+Menu "*" o--o "*" Diet : respects
+Menu "*" o--o "*" EcoBadge : tagged with
+
+' Order relationships
+Order "1" *-- "1..*" OrderItem : contains
+OrderItem "*" --> "0..1" Menu : references
+OrderItem "*" --> "0..1" Service : references
+
+' Review relationship
+Review "*" --> "1" Order : about
+Review "*" --> "0..1" User : moderated by
+
+' Eco-responsible relationships
+AntiWasteOffer "*" --> "1" Menu : based on
+RseContent "*" --> "1" User : updated by
+
+' ─────────────────────────────────────────────────────────────
+' MODULE 7 — AUDIT & TRACEABILITY (added after expert review)
+' ─────────────────────────────────────────────────────────────
+package "Module 7 — Audit & Traceability" #F0F5F1 {
+
+  class OrderStatusHistory {
+    - id: int <<PK>>
+    - order_id: int <<FK>>
+    - previous_status: string
+    - new_status: string
+    - changed_by_user_id: int <<FK>>
+    - reason: text <<nullable>>
+    - created_at: datetime
+    --
+    + create(order, oldStatus, newStatus, user): OrderStatusHistory
+    + getHistoryByOrder(orderId): OrderStatusHistory[]
+  }
+
+  class ContactMessage {
+    - id: int <<PK>>
+    - sender_name: string
+    - sender_email: string
+    - sender_phone: string <<nullable>>
+    - subject: string
+    - message: text
+    - status: enum <<unread, read, replied, archived>>
+    - assigned_to_user_id: int <<FK, nullable>>
+    - replied_at: datetime <<nullable>>
+    - created_at: datetime
+    --
+    + create(data): ContactMessage
+    + markAsRead(): bool
+    + markAsReplied(employee): bool
+    + assignTo(employee): bool
+  }
+
+  class EmailLog {
+    - id: int <<PK>>
+    - recipient_email: string
+    - subject: string
+    - template: string
+    - status: enum <<sent, failed, retrying>>
+    - error_message: text <<nullable>>
+    - related_entity_type: string <<nullable>>
+    - related_entity_id: int <<nullable>>
+    - sent_at: datetime <<nullable>>
+    - created_at: datetime
+    --
+    + log(email, subject, template): EmailLog
+    + markAsSent(): bool
+    + markAsFailed(error): bool
+    + retry(): bool
+  }
+
+  class Notification {
+    - id: int <<PK>>
+    - user_id: int <<FK>>
+    - type: enum <<order_status, review_response, anti_waste, system>>
+    - title: string
+    - message: text
+    - link_url: string <<nullable>>
+    - is_read: boolean
+    - read_at: datetime <<nullable>>
+    - created_at: datetime
+    --
+    + create(user, type, title, message): Notification
+    + markAsRead(): bool
+    + getUnreadByUser(user): Notification[]
+  }
+
+  class AuditLog {
+    - id: int <<PK>>
+    - user_id: int <<FK, nullable>>
+    - action: enum <<create, update, delete, login, logout, view>>
+    - entity_type: string
+    - entity_id: int <<nullable>>
+    - old_values: json <<nullable>>
+    - new_values: json <<nullable>>
+    - ip_address: string
+    - user_agent: string
+    - created_at: datetime
+    --
+    + log(user, action, entity, oldData, newData): AuditLog
+    + getActionsByUser(user): AuditLog[]
+    + getActionsOnEntity(type, id): AuditLog[]
+  }
+}
+
+' ─────────────────────────────────────────────────────────────
+' NEW RELATIONSHIPS
+' ─────────────────────────────────────────────────────────────
+Order "1" --o "0..*" OrderStatusHistory : tracks
+User "1" --o "0..*" OrderStatusHistory : performs
+User "1" --o "0..*" ContactMessage : assigned to
+User "1" --o "0..*" Notification : receives
+User "1" --o "0..*" AuditLog : performs
+
+' ─────────────────────────────────────────────────────────────
+' FUTURE EVOLUTION NOTE
+' ─────────────────────────────────────────────────────────────
+note bottom
+  **Future evolutions documented:**
+  - PWA Push notifications (PushSubscription class)
+  - Payment gateway integration (Payment, Transaction classes)
+  - Multi-language support (Translation class)
+end note
+
+@enduml
