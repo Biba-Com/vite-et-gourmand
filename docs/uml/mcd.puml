@@ -1,0 +1,499 @@
+@startuml "Vite & Gourmand - MCD"
+
+' ─────────────────────────────────────────────────────────────
+' VITE & GOURMAND COLOR PALETTE - improved readability
+' ─────────────────────────────────────────────────────────────
+skinparam backgroundColor #F9F9F7
+skinparam linetype ortho
+skinparam shadowing false
+skinparam roundcorner 8
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #063A1F
+  BorderThickness 2
+  HeaderBackgroundColor #063A1F
+  HeaderFontColor #FFFFFF
+  HeaderFontSize 13
+  HeaderFontStyle bold
+  FontColor #1A1A1A
+  FontSize 11
+  AttributeFontSize 11
+  AttributeFontColor #333333
+  ArrowColor #800020
+  ArrowFontColor #800020
+  ArrowFontSize 10
+  StereotypeFontColor #D4AF37
+  StereotypeFontSize 9
+  StereotypeFontStyle bold
+}
+
+skinparam package {
+  BackgroundColor #F9F9F7
+  BorderColor #D4AF37
+  BorderThickness 2
+  FontColor #063A1F
+  FontSize 14
+  FontStyle bold
+}
+
+skinparam note {
+  BackgroundColor #FFFEF0
+  BorderColor #D4AF37
+  FontColor #063A1F
+  FontSize 11
+}
+
+title <size:18><color:#063A1F>**MCD - Vite & Gourmand**</color></size>\n<size:12><color:#800020>Modele Conceptuel de Donnees | 29 entites | 7 modules</color></size>
+
+' ─────────────────────────────────────────────────────────────
+' MODULE 1 — UTILISATEURS & AUTHENTIFICATION
+' ─────────────────────────────────────────────────────────────
+package "Module 1 - Utilisateurs" {
+
+  class UTILISATEUR <<Entite>> {
+    + id_utilisateur : INT <<PK>>
+    --
+    email : VARCHAR(255) <<UNIQUE>>
+    mot_de_passe : VARCHAR(255)
+    nom : VARCHAR(100)
+    prenom : VARCHAR(100)
+    telephone : VARCHAR(20)
+    adresse : VARCHAR(255)
+    code_postal : VARCHAR(10)
+    ville : VARCHAR(100)
+    role : ENUM
+    is_active : BOOLEAN
+    created_at : DATETIME
+    updated_at : DATETIME
+    deleted_at : DATETIME
+  }
+
+  class SESSION <<Entite>> {
+    + id_session : VARCHAR(128) <<PK>>
+    --
+    # id_utilisateur : INT <<FK>>
+    csrf_token : VARCHAR(64)
+    ip_address : VARCHAR(45)
+    user_agent : VARCHAR(255)
+    last_activity : DATETIME
+    created_at : DATETIME
+  }
+
+  class TOKEN_MOT_DE_PASSE <<Entite>> {
+    + id_token : INT <<PK>>
+    --
+    # id_utilisateur : INT <<FK>>
+    token_hash : VARCHAR(255)
+    expires_at : DATETIME
+    used_at : DATETIME
+    created_at : DATETIME
+  }
+}
+
+' ─────────────────────────────────────────────────────────────
+' MODULE 2 — CATALOGUE
+' ─────────────────────────────────────────────────────────────
+package "Module 2 - Catalogue" {
+
+  class MENU <<Entite>> {
+    + id_menu : INT <<PK>>
+    --
+    # id_theme : INT <<FK>>
+    titre : VARCHAR(150)
+    description : TEXT
+    prix_par_personne : DECIMAL(8,2)
+    nb_personnes_min : INT
+    nb_personnes_max : INT
+    image_url : VARCHAR(255)
+    is_active : BOOLEAN
+    created_at : DATETIME
+    updated_at : DATETIME
+  }
+
+  class PLAT <<Entite>> {
+    + id_plat : INT <<PK>>
+    --
+    nom : VARCHAR(150)
+    description : TEXT
+    categorie : ENUM
+    image_url : VARCHAR(255)
+    is_active : BOOLEAN
+    created_at : DATETIME
+  }
+
+  class ALLERGENE <<Entite>> {
+    + id_allergene : INT <<PK>>
+    --
+    nom : VARCHAR(50) <<UNIQUE>>
+    icone : VARCHAR(255)
+  }
+
+  class THEME <<Entite>> {
+    + id_theme : INT <<PK>>
+    --
+    nom : VARCHAR(100) <<UNIQUE>>
+    description : TEXT
+    couleur : VARCHAR(7)
+  }
+
+  class REGIME <<Entite>> {
+    + id_regime : INT <<PK>>
+    --
+    nom : VARCHAR(100) <<UNIQUE>>
+    description : TEXT
+  }
+
+  class SERVICE <<Entite>> {
+    + id_service : INT <<PK>>
+    --
+    nom : VARCHAR(150)
+    description : TEXT
+    categorie : ENUM
+    prix_base : DECIMAL(8,2)
+    unite_tarification : ENUM
+    is_active : BOOLEAN
+    created_at : DATETIME
+  }
+
+  class COMPOSITION_MENU <<Jointure>> {
+    + # id_menu : INT <<PK,FK>>
+    + # id_plat : INT <<PK,FK>>
+    --
+    quantite : INT
+    ordre_affichage : INT
+  }
+
+  class PLAT_ALLERGENE <<Jointure>> {
+    + # id_plat : INT <<PK,FK>>
+    + # id_allergene : INT <<PK,FK>>
+  }
+
+  class MENU_BADGE_ECO <<Jointure>> {
+    + # id_menu : INT <<PK,FK>>
+    + # id_badge : INT <<PK,FK>>
+  }
+
+  class MENU_REGIME <<Jointure>> {
+    + # id_menu : INT <<PK,FK>>
+    + # id_regime : INT <<PK,FK>>
+  }
+}
+
+' ─────────────────────────────────────────────────────────────
+' MODULE 3 — COMMANDES
+' ─────────────────────────────────────────────────────────────
+package "Module 3 - Commandes" {
+
+  class COMMANDE <<Entite>> {
+    + id_commande : INT <<PK>>
+    --
+    # id_utilisateur : INT <<FK>>
+    date_evenement : DATETIME
+    adresse_livraison : VARCHAR(255)
+    code_postal_livraison : VARCHAR(10)
+    ville_livraison : VARCHAR(100)
+    distance_km : DECIMAL(6,2)
+    nb_personnes : INT
+    sous_total : DECIMAL(10,2)
+    montant_remise : DECIMAL(10,2)
+    frais_livraison : DECIMAL(8,2)
+    total : DECIMAL(10,2)
+    statut : ENUM
+    motif_annulation : TEXT
+    # id_utilisateur_annulation : INT <<FK>>
+    annulee_a : DATETIME
+    created_at : DATETIME
+    updated_at : DATETIME
+  }
+
+  class LIGNE_COMMANDE <<Entite>> {
+    + id_ligne : INT <<PK>>
+    --
+    # id_commande : INT <<FK>>
+    # id_menu : INT <<FK,nullable>>
+    # id_service : INT <<FK,nullable>>
+    quantite : INT
+    duree_heures : INT
+    prix_unitaire : DECIMAL(8,2)
+    sous_total : DECIMAL(10,2)
+    notes : TEXT
+  }
+
+  class CACHE_DISTANCE <<Entite>> {
+    + id_cache : INT <<PK>>
+    --
+    ville : VARCHAR(100) <<UNIQUE>>
+    distance_km : DECIMAL(6,2)
+    cached_at : DATETIME
+    expires_at : DATETIME
+  }
+}
+
+' ─────────────────────────────────────────────────────────────
+' MODULE 4 — AVIS
+' ─────────────────────────────────────────────────────────────
+package "Module 4 - Avis" {
+
+  class AVIS <<Entite>> {
+    + id_avis : INT <<PK>>
+    --
+    # id_utilisateur : INT <<FK>>
+    # id_commande : INT <<FK>>
+    note : INT
+    commentaire : TEXT
+    statut : ENUM
+    # id_moderateur : INT <<FK>>
+    moderated_at : DATETIME
+    motif_moderation : TEXT
+    created_at : DATETIME
+  }
+}
+
+' ─────────────────────────────────────────────────────────────
+' MODULE 5 — VISION ECO-RESPONSABLE
+' ─────────────────────────────────────────────────────────────
+package "Module 5 - Eco-responsable" {
+
+  class BADGE_ECO <<Entite>> {
+    + id_badge : INT <<PK>>
+    --
+    nom : VARCHAR(100) <<UNIQUE>>
+    description : TEXT
+    icone : VARCHAR(255)
+    couleur : VARCHAR(7)
+  }
+
+  class OFFRE_ANTI_GASPI <<Entite>> {
+    + id_offre : INT <<PK>>
+    --
+    # id_menu : INT <<FK>>
+    titre : VARCHAR(150)
+    description : TEXT
+    prix_original : DECIMAL(8,2)
+    prix_remise : DECIMAL(8,2)
+    quantite_disponible : INT
+    disponible_jusqua : DATETIME
+    is_active : BOOLEAN
+    created_at : DATETIME
+  }
+
+  class ABONNEMENT_ALERTE <<Entite>> {
+    + id_abonnement : INT <<PK>>
+    --
+    # id_utilisateur : INT <<FK>>
+    type_alerte : ENUM
+    is_active : BOOLEAN
+    created_at : DATETIME
+  }
+
+  class CERTIFICATION <<Entite>> {
+    + id_certification : INT <<PK>>
+    --
+    nom : VARCHAR(150)
+    description : TEXT
+    logo_url : VARCHAR(255)
+    organisme : VARCHAR(150)
+    date_validite : DATE
+    is_active : BOOLEAN
+  }
+
+  class PARTENAIRE <<Entite>> {
+    + id_partenaire : INT <<PK>>
+    --
+    nom : VARCHAR(150)
+    description : TEXT
+    logo_url : VARCHAR(255)
+    site_web : VARCHAR(255)
+    categorie : ENUM
+    is_active : BOOLEAN
+  }
+}
+
+' ─────────────────────────────────────────────────────────────
+' MODULE 6 — SYSTEME
+' ─────────────────────────────────────────────────────────────
+package "Module 6 - Systeme" {
+
+  class MEMBRE_EQUIPE <<Entite>> {
+    + id_membre : INT <<PK>>
+    --
+    nom : VARCHAR(100)
+    prenom : VARCHAR(100)
+    poste : VARCHAR(150)
+    bio : TEXT
+    photo_url : VARCHAR(255)
+    ordre_affichage : INT
+    is_active : BOOLEAN
+  }
+
+  class HORAIRES_OUVERTURE <<Entite>> {
+    + id_horaire : INT <<PK>>
+    --
+    jour_semaine : ENUM
+    heure_ouverture : TIME
+    heure_fermeture : TIME
+    is_ferme : BOOLEAN
+    date_speciale : DATE
+    notes : VARCHAR(255)
+  }
+
+  class CONTENU_RSE <<Entite>> {
+    + id_contenu : INT <<PK>>
+    --
+    cle_section : VARCHAR(50) <<UNIQUE>>
+    titre : VARCHAR(200)
+    contenu : TEXT
+    image_url : VARCHAR(255)
+    ordre_affichage : INT
+    # id_utilisateur_maj : INT <<FK>>
+    updated_at : DATETIME
+  }
+}
+
+' ─────────────────────────────────────────────────────────────
+' MODULE 7 — AUDIT & TRACABILITE
+' ─────────────────────────────────────────────────────────────
+package "Module 7 - Audit" {
+
+  class HISTORIQUE_STATUT <<Entite>> {
+    + id_historique : INT <<PK>>
+    --
+    # id_commande : INT <<FK>>
+    statut_precedent : VARCHAR(50)
+    nouveau_statut : VARCHAR(50)
+    # id_utilisateur : INT <<FK>>
+    motif : TEXT
+    created_at : DATETIME
+  }
+
+  class MESSAGE_CONTACT <<Entite>> {
+    + id_message : INT <<PK>>
+    --
+    nom_expediteur : VARCHAR(150)
+    email_expediteur : VARCHAR(255)
+    telephone_expediteur : VARCHAR(20)
+    sujet : VARCHAR(200)
+    message : TEXT
+    statut : ENUM
+    # id_assigne : INT <<FK>>
+    repondu_a : DATETIME
+    created_at : DATETIME
+  }
+
+  class LOG_EMAIL <<Entite>> {
+    + id_log : INT <<PK>>
+    --
+    destinataire : VARCHAR(255)
+    sujet : VARCHAR(255)
+    template : VARCHAR(100)
+    statut : ENUM
+    message_erreur : TEXT
+    type_entite : VARCHAR(50)
+    id_entite : INT
+    envoye_a : DATETIME
+    created_at : DATETIME
+  }
+
+  class NOTIFICATION <<Entite>> {
+    + id_notification : INT <<PK>>
+    --
+    # id_utilisateur : INT <<FK>>
+    type : ENUM
+    titre : VARCHAR(200)
+    message : TEXT
+    lien_url : VARCHAR(255)
+    is_read : BOOLEAN
+    read_at : DATETIME
+    created_at : DATETIME
+  }
+
+  class LOG_AUDIT <<Entite>> {
+    + id_audit : INT <<PK>>
+    --
+    # id_utilisateur : INT <<FK>>
+    action : ENUM
+    type_entite : VARCHAR(100)
+    id_entite : INT
+    anciennes_valeurs : JSON
+    nouvelles_valeurs : JSON
+    ip_address : VARCHAR(45)
+    user_agent : VARCHAR(255)
+    created_at : DATETIME
+  }
+}
+
+' ─────────────────────────────────────────────────────────────
+' RELATIONS - AUTHENTIFICATION
+' ─────────────────────────────────────────────────────────────
+UTILISATEUR "1" --o "0..*" SESSION : "possede"
+UTILISATEUR "1" --o "0..*" TOKEN_MOT_DE_PASSE : "demande"
+
+' ─────────────────────────────────────────────────────────────
+' RELATIONS - CATALOGUE
+' ─────────────────────────────────────────────────────────────
+THEME "1" --o "0..*" MENU : "categorise"
+MENU "1" --o "0..*" COMPOSITION_MENU
+PLAT "1" --o "0..*" COMPOSITION_MENU
+PLAT "1" --o "0..*" PLAT_ALLERGENE
+ALLERGENE "1" --o "0..*" PLAT_ALLERGENE
+MENU "1" --o "0..*" MENU_REGIME
+REGIME "1" --o "0..*" MENU_REGIME
+MENU "1" --o "0..*" MENU_BADGE_ECO
+BADGE_ECO "1" --o "0..*" MENU_BADGE_ECO
+
+' ─────────────────────────────────────────────────────────────
+' RELATIONS - COMMANDES
+' ─────────────────────────────────────────────────────────────
+UTILISATEUR "1" --o "0..*" COMMANDE : "passe"
+COMMANDE "1" --o "1..*" LIGNE_COMMANDE : "contient"
+MENU "1" --o "0..*" LIGNE_COMMANDE : "reference"
+SERVICE "1" --o "0..*" LIGNE_COMMANDE : "reference"
+
+' ─────────────────────────────────────────────────────────────
+' RELATIONS - AVIS
+' ─────────────────────────────────────────────────────────────
+UTILISATEUR "1" --o "0..*" AVIS : "redige"
+COMMANDE "1" --o "0..1" AVIS : "concerne"
+
+' ─────────────────────────────────────────────────────────────
+' RELATIONS - ECO-RESPONSABLE
+' ─────────────────────────────────────────────────────────────
+MENU "1" --o "0..*" OFFRE_ANTI_GASPI
+UTILISATEUR "1" --o "0..*" ABONNEMENT_ALERTE : "souscrit"
+
+' ─────────────────────────────────────────────────────────────
+' RELATIONS - SYSTEME
+' ─────────────────────────────────────────────────────────────
+UTILISATEUR "1" --o "0..*" CONTENU_RSE : "modifie"
+
+' ─────────────────────────────────────────────────────────────
+' RELATIONS - AUDIT
+' ─────────────────────────────────────────────────────────────
+COMMANDE "1" --o "0..*" HISTORIQUE_STATUT : "trace"
+UTILISATEUR "1" --o "0..*" HISTORIQUE_STATUT : "effectue"
+UTILISATEUR "1" --o "0..*" MESSAGE_CONTACT : "assigne_a"
+UTILISATEUR "1" --o "0..*" NOTIFICATION : "recoit"
+UTILISATEUR "1" --o "0..*" LOG_AUDIT : "trace"
+
+' ─────────────────────────────────────────────────────────────
+' LEGEND
+' ─────────────────────────────────────────────────────────────
+note bottom
+  <b>Legende :</b>
+  + = cle primaire (PK)
+  # = cle etrangere (FK)
+  
+  <b>Stereotypes :</b>
+  <<Entite>> = Entite metier
+  <<Jointure>> = Table associative (relation N-N)
+  
+  <b>Cardinalites :</b>
+  "1" --o "0..*" = un a plusieurs (0,n)
+  "1" --o "1..*" = un a plusieurs obligatoire
+  "1" --o "0..1" = un a un optionnel
+  
+  <b>Total : 29 entites - 7 modules</b>
+end note
+
+@enduml
