@@ -26,7 +26,8 @@ Engagement éco-responsable, anti-gaspillage, partenaires locaux.
     - [Use case diagram](#use-case-diagram)
     - [Sequence diagram — Order workflow](#sequence-diagram--order-workflow)
     - [Class diagram](#class-diagram)
-    - [Database model (MCD / ERD)](#database-model-mcd--erd)
+    - [Database model — MCD (Merise notation)](#database-model--mcd-merise-notation)
+    - [ERD (Mermaid)](#erd-mermaid)
   - [🌱 Eco-responsible vision](#-eco-responsible-vision)
   - [🔗 Project links](#-project-links)
   - [📁 Project structure](#-project-structure)
@@ -121,8 +122,23 @@ Complete application architecture with 29 classes organized into 7 modules:
 
 📄 [PlantUML source](docs/uml/classe.puml)
 
-### Database model (MCD / ERD)
-*(coming soon — Merise notation + Mermaid ERD)*
+### Database model — MCD (Merise notation)
+
+Conceptual data model with 29 entities organized across 7 modules:
+1. **Utilisateurs** — Authentication and sessions
+2. **Catalogue** — Menus, dishes, services with join tables
+3. **Commandes** — Orders with multi-service line items
+4. **Avis** — Reviews with moderation workflow
+5. **Eco-responsable** — Anti-waste, certifications, partners
+6. **Systeme** — Team, opening hours, RSE content
+7. **Audit** — Status history, contact, email logs, notifications
+
+![MCD](docs/uml/exports/Vite%20%26%20Gourmand%20-%20MCD.png)
+
+📄 [PlantUML source](docs/uml/mcd.puml)
+
+### ERD (Mermaid)
+*(coming soon — embedded in README for native GitHub rendering)*
 
 ---
 
