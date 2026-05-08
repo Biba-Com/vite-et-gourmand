@@ -195,6 +195,15 @@ package "Module 2 — Catalog" #F0F5F1 {
     --
     + getAllergensByDish(dish): Allergen[]
   }
+
+  class MenuCertification {
+    - menu_id: int <<FK, PK>>
+    - certification_id: int <<FK, PK>>
+    --
+    + getCertificationsByMenu(menu): Certification[]
+    + getMenusByCertification(cert): Menu[]
+  }
+
 }
 
 ' ─────────────────────────────────────────────────────────────
@@ -234,8 +243,9 @@ package "Module 3 — Orders" #F0F5F1 {
   class OrderItem {
     - id: int <<PK>>
     - order_id: int <<FK>>
-    - item_type: enum <<menu, service>>
-    - reference_id: int <<polymorphic FK>>
+    - menu_id: int <<FK, nullable>>
+    - service_id: int <<FK, nullable>>
+    - offer_id: int <<FK, nullable>>    ← AJOUTER
     - quantity: int
     - duration_hours: int <<nullable>>
     - unit_price: decimal(8,2)
@@ -244,7 +254,7 @@ package "Module 3 — Orders" #F0F5F1 {
     --
     + create(orderId, data): OrderItem
     + calculateSubtotal(): decimal
-    + getReference(): Menu|Service
+    + getReference(): Menu|Service|AntiWasteOffer
   }
 
   class DistanceCache {
@@ -538,6 +548,9 @@ User "1" --o "0..*" OrderStatusHistory : performs
 User "1" --o "0..*" ContactMessage : assigned to
 User "1" --o "0..*" Notification : receives
 User "1" --o "0..*" AuditLog : performs
+Menu "*" o--o "*" Certification : certified by
+(Menu, Certification) .. MenuCertification
+AntiWasteOffer "1" --o "0..*" OrderItem : sold via
 
 ' ─────────────────────────────────────────────────────────────
 ' FUTURE EVOLUTION NOTE
