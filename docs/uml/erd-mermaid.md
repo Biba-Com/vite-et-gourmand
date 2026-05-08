@@ -1,7 +1,7 @@
 # ERD - Vite & Gourmand
 
 > Entity Relationship Diagram (ERD) using Mermaid notation
-> 30 entities across 7 modules 
+> 31 entities across 7 modules 
 
 ```mermaid
 erDiagram
@@ -418,7 +418,7 @@ Column typed VARCHAR(255) to support modern hashing algorithms
 
 ## Statistics
 
-- **30 entities** total
+- **31 entities** total
 - **7 logical modules**
 - **~33 relationships**
 - **5 join tables**: composition_menu, plat_allergene, menu_regime, menu_badge_eco, menu_certification
