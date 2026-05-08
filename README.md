@@ -172,6 +172,19 @@ erDiagram
 
 📄 [Full ERD with architecture notes](docs/uml/erd-mermaid.md)
 
+### Note on entity counts
+
+The numbers in our documentation reflect different views of the same domain:
+
+- **Class diagram (29 classes)** — Object-oriented application architecture. 
+  Some simple join tables don't appear as separate classes; their behavior 
+  is encapsulated in parent class methods.
+- **MCD/ERD/SQL (31 tables)** — Physical database structure with explicit 
+  join tables for many-to-many relationships.
+
+This difference is intentional and follows industry-standard separation 
+between domain logic (OOP) and data persistence (RDBMS).
+
 ---
 
 ## 🌱 Eco-responsible vision
