@@ -44,7 +44,7 @@ skinparam note {
   FontSize 11
 }
 
-title <size:18><color:#063A1F>**MCD - Vite & Gourmand**</color></size>\n<size:12><color:#800020>Modele Conceptuel de Donnees | 29 entites | 7 modules</color></size>
+title <size:18><color:#063A1F>**MCD - Vite & Gourmand**</color></size>\n<size:12><color:#800020>Modele Conceptuel de Donnees | 31 entites | 7 modules</color></size>
 
 ' ─────────────────────────────────────────────────────────────
 ' MODULE 1 — UTILISATEURS & AUTHENTIFICATION
@@ -506,7 +506,7 @@ note bottom
   "1" --o "1..*" = un a plusieurs obligatoire
   "1" --o "0..1" = un a un optionnel
   
-  <b>Total : 29 entites - 7 modules</b>
+  <b>Total : 31 entites - 7 modules</b>
 end note
 
 @enduml
