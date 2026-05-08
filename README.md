@@ -27,7 +27,7 @@ Engagement éco-responsable, anti-gaspillage, partenaires locaux.
     - [Sequence diagram — Order workflow](#sequence-diagram--order-workflow)
     - [Class diagram](#class-diagram)
     - [Database model — MCD (Merise notation)](#database-model--mcd-merise-notation)
-    - [ERD (Mermaid)](#erd-mermaid)
+    - [Database model — ERD (Mermaid)](#database-model--erd-mermaid)
   - [🌱 Eco-responsible vision](#-eco-responsible-vision)
   - [🔗 Project links](#-project-links)
   - [📁 Project structure](#-project-structure)
@@ -124,21 +124,53 @@ Complete application architecture with 29 classes organized into 7 modules:
 
 ### Database model — MCD (Merise notation)
 
-Conceptual data model with 29 entities organized across 7 modules:
-1. **Utilisateurs** — Authentication and sessions
-2. **Catalogue** — Menus, dishes, services with join tables
-3. **Commandes** — Orders with multi-service line items
-4. **Avis** — Reviews with moderation workflow
-5. **Eco-responsable** — Anti-waste, certifications, partners
-6. **Systeme** — Team, opening hours, RSE content
-7. **Audit** — Status history, contact, email logs, notifications
+Conceptual data model with 30 entities organized across 7 modules.
 
 ![MCD](docs/uml/exports/Vite%20%26%20Gourmand%20-%20MCD.png)
 
 📄 [PlantUML source](docs/uml/mcd.puml)
 
-### ERD (Mermaid)
-*(coming soon — embedded in README for native GitHub rendering)*
+---
+
+### Database model — ERD (Mermaid)
+
+Interactive entity relationship diagram rendered natively by GitHub.
+
+```mermaid
+erDiagram
+    UTILISATEUR ||--o{ SESSION : "possede"
+    UTILISATEUR ||--o{ TOKEN_MOT_DE_PASSE : "demande"
+    UTILISATEUR ||--o{ COMMANDE : "passe"
+    UTILISATEUR ||--o{ AVIS : "redige"
+    UTILISATEUR ||--o{ ABONNEMENT_ALERTE : "souscrit"
+    UTILISATEUR ||--o{ NOTIFICATION : "recoit"
+    UTILISATEUR ||--o{ CONTENU_RSE : "modifie"
+    UTILISATEUR ||--o{ HISTORIQUE_STATUT : "effectue"
+    UTILISATEUR ||--o{ LOG_AUDIT : "trace"
+    UTILISATEUR ||--o{ MESSAGE_CONTACT : "assigne_a"
+    
+    THEME ||--o{ MENU : "categorise"
+    MENU ||--o{ COMPOSITION_MENU : "compose"
+    PLAT ||--o{ COMPOSITION_MENU : "appartient"
+    PLAT ||--o{ PLAT_ALLERGENE : "contient"
+    ALLERGENE ||--o{ PLAT_ALLERGENE : "present"
+    MENU ||--o{ MENU_REGIME : "respecte"
+    REGIME ||--o{ MENU_REGIME : "applique"
+    MENU ||--o{ MENU_BADGE_ECO : "etiquete"
+    BADGE_ECO ||--o{ MENU_BADGE_ECO : "applique"
+    MENU ||--o{ MENU_CERTIFICATION : "certifie"
+    CERTIFICATION ||--o{ MENU_CERTIFICATION : "valide"
+    
+    COMMANDE ||--|{ LIGNE_COMMANDE : "contient"
+    MENU ||--o{ LIGNE_COMMANDE : "reference"
+    SERVICE ||--o{ LIGNE_COMMANDE : "reference"
+    OFFRE_ANTI_GASPI ||--o{ LIGNE_COMMANDE : "vendue_via"
+    COMMANDE ||--o| AVIS : "concerne"
+    COMMANDE ||--o{ HISTORIQUE_STATUT : "trace"
+    MENU ||--o{ OFFRE_ANTI_GASPI : "concerne"
+```
+
+📄 [Full ERD with architecture notes](docs/uml/erd-mermaid.md)
 
 ---
 
