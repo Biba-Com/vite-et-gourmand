@@ -178,6 +178,11 @@ package "Module 2 - Catalogue" {
     + # id_menu : INT <<PK,FK>>
     + # id_regime : INT <<PK,FK>>
   }
+
+  class MENU_CERTIFICATION <<Jointure>> {
+    + # id_menu : INT <<PK,FK>>
+    + # id_certification : INT <<PK,FK>>
+  }
 }
 
 ' ─────────────────────────────────────────────────────────────
@@ -207,12 +212,13 @@ package "Module 3 - Commandes" {
     updated_at : DATETIME
   }
 
-  class LIGNE_COMMANDE <<Entite>> {
+ class LIGNE_COMMANDE <<Entite>> {
     + id_ligne : INT <<PK>>
     --
     # id_commande : INT <<FK>>
     # id_menu : INT <<FK,nullable>>
     # id_service : INT <<FK,nullable>>
+    # id_offre : INT <<FK,nullable>>
     quantite : INT
     duree_heures : INT
     prix_unitaire : DECIMAL(8,2)
@@ -475,6 +481,13 @@ UTILISATEUR "1" --o "0..*" HISTORIQUE_STATUT : "effectue"
 UTILISATEUR "1" --o "0..*" MESSAGE_CONTACT : "assigne_a"
 UTILISATEUR "1" --o "0..*" NOTIFICATION : "recoit"
 UTILISATEUR "1" --o "0..*" LOG_AUDIT : "trace"
+
+' ─────────────────────────────────────────────────────────────
+' RELATIONS - CERTIFICATION
+' ─────────────────────────────────────────────────────────────
+MENU "1" --o "0..*" MENU_CERTIFICATION : "certifie"
+CERTIFICATION "1" --o "0..*" MENU_CERTIFICATION : "valide"
+OFFRE_ANTI_GASPI "1" --o "0..*" LIGNE_COMMANDE : "vendue_via"
 
 ' ─────────────────────────────────────────────────────────────
 ' LEGEND
