@@ -124,7 +124,7 @@ Complete application architecture with 29 classes organized into 7 modules:
 
 ### Database model — MCD (Merise notation)
 
-Conceptual data model with 30 entities organized across 7 modules.
+Conceptual data model with 31 entities organized across 7 modules.
 
 ![MCD](docs/uml/exports/Vite%20%26%20Gourmand%20-%20MCD.png)
 
