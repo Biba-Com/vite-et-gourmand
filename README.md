@@ -2,11 +2,9 @@
 
 > Eco-responsible catering web application — full-stack project for the DWWM certification (ECF).
 
-
 ![Status](https://img.shields.io/badge/status-in%20development-orange)
 ![PHP](https://img.shields.io/badge/PHP-8.3-777BB4?logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-8.4-4479A1?logo=mysql&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-8-47A248?logo=mongodb&logoColor=white)
 ![License](https://img.shields.io/badge/license-Educational-blue)
 
 Application de commande de menus traiteur événementiel pour l'entreprise Vite & Gourmand (Bordeaux).
@@ -28,6 +26,7 @@ Engagement éco-responsable, anti-gaspillage, partenaires locaux.
     - [Class diagram](#class-diagram)
     - [Database model — MCD (Merise notation)](#database-model--mcd-merise-notation)
     - [Database model — ERD (Mermaid)](#database-model--erd-mermaid)
+    - [Note on entity counts](#note-on-entity-counts)
   - [🌱 Eco-responsible vision](#-eco-responsible-vision)
   - [🔗 Project links](#-project-links)
   - [📁 Project structure](#-project-structure)
@@ -41,8 +40,7 @@ Engagement éco-responsable, anti-gaspillage, partenaires locaux.
 | ------------------ | --------------------------------------- |
 | Front-end          | HTML5, CSS3, Vanilla JavaScript         |
 | Back-end           | PHP 8.3 with PDO                        |
-| Relational DB      | MySQL 8.4                               |
-| NoSQL DB           | MongoDB 8                               |
+| Relational DB      | MySQL 8.4 (MariaDB via Laragon)         |
 | Email service      | PHPMailer + Mailpit (development)       |
 | Local environment  | Laragon                                 |
 | Deployment         | fly.io                                  |
@@ -52,6 +50,7 @@ Engagement éco-responsable, anti-gaspillage, partenaires locaux.
 | Versioning         | Git + GitHub                            |
 
 ---
+
 ## 📦 Local installation
 
 ```bash
@@ -59,28 +58,35 @@ Engagement éco-responsable, anti-gaspillage, partenaires locaux.
 git clone https://github.com/Biba-Com/vite-et-gourmand.git
 cd vite-et-gourmand
 
-# Install PHP dependencies
-composer install
-
 # Configure environment variables
 cp .env.example .env
 # Then edit .env with your local credentials
 
-# Initialize the database
-mysql -u root -p < database/create.sql
-mysql -u root -p < database/fixtures.sql
+# Initialize the database (run in this order)
+mysql -u root < database/create.sql
+mysql -u root < database/fixtures.sql
 ```
+
+> **Note :** Database schema v1.1.0 — includes SEO-friendly slugs on menu table.
+> No password required for root on Laragon by default.
+
 ---
 
 ## 🔑 Test credentials
 
-| Role     | Email                          | Password       |
-| -------- | ------------------------------ | -------------- |
-| Admin    | admin@vite-et-gourmand.fr      | Admin@2026     |
-| Employee | employe@vite-et-gourmand.fr    | Employe@2026   |
-| Client   | client@vite-et-gourmand.fr     | Client@2026    |
+> ⚠️ **Development only** — these are simple passwords for local testing purposes only.
+> Never use these credentials in a production environment.
+
+| Role     | Email                               | Password   |
+| -------- | ----------------------------------- | ---------- |
+| Admin    | admin@viteetgourmand.fr             | password   |
+| Employee | julien.martin@viteetgourmand.fr     | password   |
+| Client   | sophie.bernard@email.fr             | password   |
+| Client   | thomas.petit@email.fr               | password   |
+| Client   | claire.leroy@email.fr               | password   |
 
 ---
+
 ## 📐 Documentation
 
 ### MVC Architecture
@@ -176,13 +182,13 @@ erDiagram
 
 The numbers in our documentation reflect different views of the same domain:
 
-- **Class diagram (29 classes)** — Object-oriented application architecture. 
-  Some simple join tables don't appear as separate classes; their behavior 
+- **Class diagram (29 classes)** — Object-oriented application architecture.
+  Some simple join tables don't appear as separate classes; their behavior
   is encapsulated in parent class methods.
-- **MCD/ERD/SQL (31 tables)** — Physical database structure with explicit 
+- **MCD/ERD/SQL (31 tables)** — Physical database structure with explicit
   join tables for many-to-many relationships.
 
-This difference is intentional and follows industry-standard separation 
+This difference is intentional and follows industry-standard separation
 between domain logic (OOP) and data persistence (RDBMS).
 
 ---
@@ -209,15 +215,17 @@ This application includes features beyond the standard catering scope to support
 
 ## 📁 Project structure
 
-\```
+```
 vite-et-gourmand/
-├── database/                # SQL scripts (create.sql, fixtures.sql)
+├── database/                # SQL scripts
+│   ├── create.sql           # Schema v1.1.0 (with slug on menu)
+│   └── fixtures.sql         # Demo data — 5 users, 8 menus, 20 dishes
 ├── docs/
 │   ├── maquettes/           # Figma exports
 │   └── uml/                 # PlantUML diagrams
 │       └── exports/         # PNG/SVG outputs
 ├── src/
-│   ├── config/              # DB connection, constants
+│   ├── config/              # DB connection (database.php), constants
 │   ├── controllers/         # MVC — business logic
 │   ├── models/              # MVC — database access
 │   ├── views/               # MVC — HTML/PHP templates
@@ -226,7 +234,7 @@ vite-et-gourmand/
 ├── .env.example             # Environment variables template
 ├── .gitignore
 └── README.md
-\```
+```
 
 ---
 
