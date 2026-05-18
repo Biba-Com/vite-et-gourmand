@@ -1,0 +1,16 @@
+/* ==========================================================================
+   Vite & Gourmand — Main Stylesheet
+   Path: src/public/assets/css/main.css
+   ========================================================================== */
+@import 'variables.css';
+@import 'reset.css';
+
+/* Components */
+@import 'components/header.css';
+@import 'components/footer.css';
+
+
+/* Pages */
+@import 'pages/home.css'; 
+@import 'pages/auth.css';
+@import 'pages/catalogue.css';
