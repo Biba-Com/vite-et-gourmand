@@ -1,6 +1,6 @@
 /********************************************************************************
  * Vite & Gourmand — Database Structure
- * Version: 1.0.0
+ * Version: 1.1.0
  * Engine: MySQL 8.x
  * Charset: utf8mb4
  * Collation: utf8mb4_unicode_ci
@@ -165,6 +165,7 @@ CREATE TABLE menu (
   id_menu INT NOT NULL AUTO_INCREMENT,
   id_theme INT NULL,
   titre VARCHAR(150) NOT NULL,
+  slug VARCHAR(100) NOT NULL COMMENT 'URL-friendly identifier (e.g., menu-elegance)',
   description TEXT NULL,
   prix_par_personne DECIMAL(8, 2) NOT NULL,
   nb_personnes_min INT NOT NULL DEFAULT 10,
@@ -174,6 +175,7 @@ CREATE TABLE menu (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_menu),
+  UNIQUE KEY uq_menu_slug (slug),
   INDEX idx_menu_theme (id_theme),
   INDEX idx_menu_is_active (is_active),
   INDEX idx_menu_prix (prix_par_personne),
@@ -577,6 +579,11 @@ CREATE TABLE log_audit (
 -- Phone format:
 -- Application layer must normalize to E.164 format (+33XXXXXXXXX).
 -- Validation via regex before INSERT/UPDATE.
+-- Slug strategy:
+-- Menu slugs are generated from titles (lowercase, accents stripped,
+-- spaces replaced with hyphens). Application layer generates slugs
+-- via a helper function on INSERT/UPDATE. UNIQUE constraint prevents
+-- duplicates. Used for SEO-friendly URLs (e.g., /catalogue/menu-elegance).
 -- ============================================================
 -- Finalize
 -- ============================================================
