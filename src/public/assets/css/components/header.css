@@ -683,3 +683,123 @@
         display: none;
     }
 }
+
+
+/* ============================================================
+   Vite & Gourmand — Header User Dropdown CSS
+   ============================================================ */
+
+/* ── Menu déroulant utilisateur ────────────────────────── */
+.header__user-dropdown {
+    position: relative;
+}
+
+.header__user-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.9rem;
+    border: 1.5px solid var(--color-forest);
+    border-radius: var(--radius-full);
+    background: var(--color-forest);
+    color: var(--color-white);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    white-space: nowrap;
+}
+
+.header__user-btn:hover {
+    background: var(--color-bordeaux);
+    border-color: var(--color-bordeaux);
+}
+
+.header__user-name {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.header__user-chevron {
+    transition: transform var(--transition-fast);
+}
+
+.header__user-btn[aria-expanded="true"] .header__user-chevron {
+    transform: rotate(180deg);
+}
+
+/* Menu déroulant */
+.header__user-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    min-width: 200px;
+    background: var(--color-white);
+    border: var(--border-thin);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    padding: 0.5rem 0;
+    list-style: none;
+    z-index: var(--z-dropdown);
+}
+
+.header__user-menu--open {
+    display: block;
+    animation: fadeInDown 0.18s ease;
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.header__user-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1rem;
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.header__user-menu-item:hover {
+    background: var(--color-gray-100);
+    color: var(--color-forest);
+}
+
+.header__user-menu-item svg {
+    color: var(--color-gray-400);
+    flex-shrink: 0;
+}
+
+.header__user-menu-item--logout {
+    color: var(--color-bordeaux);
+}
+
+.header__user-menu-item--logout svg {
+    color: var(--color-bordeaux);
+}
+
+.header__user-menu-item--logout:hover {
+    background: #FFF0F0;
+    color: var(--color-bordeaux-dark);
+}
+
+.header__user-menu-divider {
+    height: 1px;
+    background: var(--color-gray-200);
+    margin: 0.4rem 0;
+}
+
+/* Badge panier actif */
+.header__cart-count--active {
+    background: var(--color-bordeaux) !important;
+    color: var(--color-white) !important;
+}
+

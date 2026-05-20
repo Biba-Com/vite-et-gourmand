@@ -1,93 +1,78 @@
 <?php
 
 /**
- * Page: Connexion
- * Path: src/public/connexion/index.php
- * Sécurité : CSRF token · session · validation serveur
+ * ============================================================
+ * Vite & Gourmand — Point d'entrée Connexion
+ * ============================================================
+ * Chemin : src/public/connexion/index.php
+ *
+ * GET  → Affiche le formulaire
+ * POST → Traite la connexion via AuthController
+ *
+ * Variables transmises à la vue :
+ *  - $error     string|null  Message d'erreur unique
+ *  - $success   string|null  Message flash (après inscription)
+ *  - $oldData   array        Valeurs précédentes (email)
+ *  - $csrfToken string       Token CSRF
+ * ============================================================
  */
 
-define('BASE_PATH', dirname(__DIR__, 2));
-require BASE_PATH . '/config/lang.php';
+session_start();
 
-if (session_status() === PHP_SESSION_NONE) session_start();
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../config/lang.php';
+require_once __DIR__ . '/../../models/UserModel.php';
+require_once __DIR__ . '/../../controllers/AuthController.php';
 
-$currentLang = function_exists('currentLang') ? currentLang() : 'fr';
+$currentLang = currentLang();
+$isEn        = $currentLang === 'en';
+$assetsBase  = '/assets';
+$currentPage = 'connexion';
 
-/* Redirection si déjà connecté */
-if (!empty($_SESSION['user_id'])) {
+$pageTitle = $isEn ? 'Login — Vite & Gourmand' : 'Connexion — Vite & Gourmand';
+$pageDesc  = $isEn ? 'Login to your account' : 'Connectez-vous à votre espace personnel';
+
+// ── Si déjà connecté → rediriger ─────────────────────────
+if (AuthController::isLoggedIn()) {
     header('Location: /');
     exit;
 }
 
-/* Génération CSRF */
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+// ── Initialiser ──────────────────────────────────────────
+$pdo            = getDbConnection();
+$userModel      = new UserModel($pdo);
+$authController = new AuthController($userModel, $pdo);
+
+$csrfToken = AuthController::generateCsrfToken();
+$error     = null;
+$success   = null;
+$oldData   = ['email' => ''];
+
+// ── Message flash (après inscription réussie) ────────────
+if (!empty($_SESSION['flash_success'])) {
+    $success = $_SESSION['flash_success'];
+    unset($_SESSION['flash_success']);
 }
 
-$error   = null;
-$oldData = [];
-
-/* ----------------------------------------------------------------
-   Traitement POST
-   ---------------------------------------------------------------- */
+// ── Traitement POST ──────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $oldData['email'] = trim(strip_tags($_POST['email'] ?? ''));
 
-    /* Vérification CSRF */
-    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
-        $error = $currentLang === 'en'
-            ? 'Security error. Please try again.'
-            : 'Erreur de sécurité. Veuillez réessayer.';
-    } else {
-        $email    = trim($_POST['email'] ?? '');
-        $password = $_POST['password'] ?? '';
-        $remember = !empty($_POST['remember']);
+    $result = $authController->login($_POST);
 
-        /* Validation basique avant appel controller */
-        if (empty($email) || empty($password)) {
-            $error = $currentLang === 'en'
-                ? 'Please fill in all fields.'
-                : 'Veuillez remplir tous les champs.';
-            $oldData['email'] = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $error = $currentLang === 'en'
-                ? 'Invalid email address.'
-                : 'Adresse email invalide.';
-            $oldData['email'] = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
-        } else {
-            require_once BASE_PATH . '/controllers/AuthController.php';
-            $auth   = new AuthController();
-            $result = $auth->login($email, $password, $remember);
-
-            if ($result['success']) {
-                /* Régénérer le CSRF après login réussi */
-                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-                header('Location: /');
-                exit;
-            } else {
-                $error            = $result['message'];
-                $oldData['email'] = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
-                /* Régénérer le CSRF après échec aussi */
-                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-            }
-        }
+    if ($result['success']) {
+        $redirect = $_SESSION['redirect_after_login'] ?? '/';
+        unset($_SESSION['redirect_after_login']);
+        header('Location: ' . $redirect);
+        exit;
     }
+
+    $error = $result['message'];
+    $csrfToken = AuthController::generateCsrfToken();
 }
 
-/* ----------------------------------------------------------------
-   Rendu via base.php
-   ---------------------------------------------------------------- */
-$pageTitle   = $currentLang === 'en'
-    ? 'Sign In — Vite & Gourmand'
-    : 'Connexion — Vite & Gourmand';
-
-$pageDesc    = $currentLang === 'en'
-    ? 'Sign in to your Vite & Gourmand personal account to manage your orders and quotes.'
-    : 'Connectez-vous à votre espace Vite & Gourmand pour gérer vos commandes et devis.';
-
-$currentPage = 'connexion';
-
+// ── Affichage ────────────────────────────────────────────
 ob_start();
-include BASE_PATH . '/views/pages/connexion.php';
+require_once __DIR__ . '/../../views/pages/connexion.php';
 $content = ob_get_clean();
-
-include BASE_PATH . '/views/layouts/base.php';
+require_once __DIR__ . '/../../views/layouts/base.php';

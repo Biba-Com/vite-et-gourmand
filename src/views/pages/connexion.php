@@ -1,8 +1,15 @@
 <?php
 
 /**
- * View: Page Connexion
+ * View: Page Connexion (v2.0)
  * Path: src/views/pages/connexion.php
+ *
+ * Variables disponibles :
+ *  - $error     string|null  Message d'erreur
+ *  - $success   string|null  Message flash succès (après inscription)
+ *  - $oldData   array        ['email' => '...']
+ *  - $csrfToken string       Token CSRF
+ *  - $isEn      bool         Langue active
  */
 $isEn = ($currentLang ?? 'fr') === 'en';
 ?>
@@ -31,7 +38,18 @@ $isEn = ($currentLang ?? 'fr') === 'en';
                 </p>
             </div>
 
-            <!-- ✅ Erreur globale (identifiants incorrects, etc.) -->
+            <!-- ✅ Message succès (après inscription réussie) -->
+            <?php if (!empty($success)): ?>
+                <div class="auth-alert auth-alert--success" role="status" aria-live="polite">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <?= htmlspecialchars($success, ENT_QUOTES, 'UTF-8') ?>
+                </div>
+            <?php endif; ?>
+
+            <!-- ❌ Erreur globale (identifiants incorrects, etc.) -->
             <?php if (!empty($error)): ?>
                 <div class="auth-alert auth-alert--error" role="alert" aria-live="assertive">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -51,7 +69,7 @@ $isEn = ($currentLang ?? 'fr') === 'en';
                 novalidate
                 aria-label="<?= $isEn ? 'Sign in form' : 'Formulaire de connexion' ?>">
 
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken ?? $_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
                 <!-- Email -->
                 <div class="form-group">
@@ -70,7 +88,7 @@ $isEn = ($currentLang ?? 'fr') === 'en';
                             name="email"
                             class="form-input"
                             placeholder="votre@email.fr"
-                            value="<?= $oldData['email'] ?? '' ?>"
+                            value="<?= htmlspecialchars($oldData['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                             autocomplete="email"
                             required
                             aria-required="true">
@@ -119,7 +137,7 @@ $isEn = ($currentLang ?? 'fr') === 'en';
                             <?= $isEn ? 'Remember me' : 'Se souvenir de moi' ?>
                         </span>
                     </label>
-                    <a href="/mot-de-passe-oublie" class="auth-form__forgot">
+                    <a href="/mot-de-passe-oublie/" class="auth-form__forgot">
                         <?= $isEn ? 'Forgot password?' : 'Mot de passe oublié ?' ?>
                     </a>
                 </div>
