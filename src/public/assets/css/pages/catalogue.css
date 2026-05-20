@@ -1440,3 +1440,234 @@
     .detail-cta-final__actions { flex-direction: column; align-items: center; }
     .composition-grid { grid-template-columns: 1fr; }
 }
+/* ============================================================
+   Vite & Gourmand — Modale Panier CSS
+   À AJOUTER à la fin de catalogue.css
+   ============================================================ */
+
+/* ── Erreur panier (banner) ────────────────────────────── */
+.cart-error-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    background: #FFF0F0;
+    border: 1px solid #FFCDD2;
+    border-radius: var(--radius-md);
+    padding: var(--space-md) var(--space-lg);
+    margin: var(--space-md) 0;
+    color: var(--color-bordeaux);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+}
+
+.cart-error-banner ul {
+    list-style: disc;
+    padding-left: var(--space-md);
+    margin: 0;
+}
+
+/* ── Overlay ────────────────────────────────────────────── */
+.cart-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+}
+
+.cart-modal--open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart-modal__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(6, 58, 31, 0.6);
+    backdrop-filter: blur(2px);
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ── Panel ──────────────────────────────────────────────── */
+.cart-modal__panel {
+    position: relative;
+    z-index: 1;
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.25s ease;
+    margin: var(--space-md);
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.cart-modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-lg);
+    border-bottom: var(--border-thin);
+}
+
+.cart-modal__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-heading);
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin: 0;
+}
+
+.cart-modal__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    background: var(--color-gray-100);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    color: var(--color-gray-500);
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.cart-modal__close:hover {
+    background: var(--color-bordeaux);
+    color: var(--color-white);
+}
+
+/* ── Résumé menu ────────────────────────────────────────── */
+.cart-modal__menu-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md) var(--space-lg);
+    background: var(--color-gray-100);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-forest);
+    gap: var(--space-md);
+}
+
+.cart-modal__price-unit {
+    color: var(--color-bordeaux);
+    font-weight: var(--fw-semibold);
+    white-space: nowrap;
+}
+
+/* ── Formulaire ─────────────────────────────────────────── */
+.cart-modal__form {
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.cart-modal__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.cart-modal__label {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-forest);
+}
+
+.cart-modal__input {
+    padding: 0.65rem var(--space-md);
+    border: 1.5px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    background: var(--color-gray-100);
+    font-family: var(--font-body);
+    font-size: var(--fs-base);
+    color: var(--color-text);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    width: 100%;
+}
+
+.cart-modal__input:focus {
+    outline: none;
+    border-color: var(--color-forest);
+    box-shadow: 0 0 0 3px rgba(6, 58, 31, 0.12);
+    background: var(--color-white);
+}
+
+.cart-modal__hint {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-400);
+}
+
+.cart-modal__row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: var(--space-md);
+}
+
+/* ── Aperçu prix ────────────────────────────────────────── */
+.cart-modal__price-preview {
+    background: var(--color-gray-100);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.cart-modal__price-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-600);
+}
+
+.cart-modal__price-remise {
+    color: var(--color-success) !important;
+}
+
+.cart-modal__price-line--total {
+    padding-top: var(--space-xs);
+    border-top: var(--border-thin);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+}
+
+.cart-modal__price-line--total strong {
+    font-family: var(--font-heading);
+    font-size: var(--fs-lg);
+    color: var(--color-bordeaux);
+}
+
+/* ── Submit ─────────────────────────────────────────────── */
+.cart-modal__submit {
+    width: 100%;
+    justify-content: center;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .cart-modal__panel { margin: var(--space-sm); max-height: 95vh; }
+    .cart-modal__row { grid-template-columns: 1fr; }
+}

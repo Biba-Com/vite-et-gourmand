@@ -1,0 +1,326 @@
+/* ============================================================
+   Vite & Gourmand — Suivi Commande CSS
+   Chemin : src/public/assets/css/pages/suivi-commande.css
+   ============================================================ */
+
+.suivi-page {
+    background: var(--color-cream);
+    padding: var(--space-xl) 0 var(--space-3xl);
+    min-height: 70vh;
+}
+
+/* ── En-tête ────────────────────────────────────────────── */
+.suivi__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-xl);
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.suivi__back {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-forest);
+    text-decoration: none;
+    margin-bottom: var(--space-xs);
+}
+
+.suivi__back:hover { text-decoration: underline; }
+
+.suivi__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.suivi__num { color: var(--color-bordeaux); }
+
+.suivi__statut-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 0.4rem 1rem;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--statut-color) 15%, white);
+    color: var(--statut-color);
+    border: 1px solid color-mix(in srgb, var(--statut-color) 30%, white);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    white-space: nowrap;
+    align-self: flex-start;
+}
+
+/* ── Layout ─────────────────────────────────────────────── */
+.suivi__layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: var(--space-xl);
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .suivi__layout { grid-template-columns: 1fr; }
+}
+
+/* ── Barre de progression ───────────────────────────────── */
+.suivi__progress {
+    display: flex;
+    align-items: flex-start;
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-xl) var(--space-lg);
+    margin-bottom: var(--space-xl);
+    overflow-x: auto;
+    gap: 0;
+}
+
+.suivi__progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+    min-width: 80px;
+}
+
+.suivi__progress-dot {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-full);
+    background: var(--color-gray-200);
+    color: var(--color-gray-400);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    font-family: var(--font-body);
+    transition: background var(--transition-base), color var(--transition-base);
+    z-index: 1;
+    position: relative;
+}
+
+.suivi__progress-step--done .suivi__progress-dot {
+    background: var(--dot-color, var(--color-forest));
+    color: var(--color-white);
+}
+
+.suivi__progress-step--current .suivi__progress-dot {
+    background: var(--dot-color, var(--color-forest));
+    color: var(--color-white);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--dot-color, var(--color-forest)) 30%, transparent);
+}
+
+.suivi__progress-label {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-400);
+    text-align: center;
+    margin-top: var(--space-xs);
+    line-height: var(--lh-base);
+}
+
+.suivi__progress-step--done .suivi__progress-label,
+.suivi__progress-step--current .suivi__progress-label {
+    color: var(--color-text);
+    font-weight: var(--fw-medium);
+}
+
+.suivi__progress-line {
+    position: absolute;
+    top: 1.25rem;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: var(--color-gray-200);
+    z-index: 0;
+}
+
+.suivi__progress-line--done {
+    background: var(--color-forest);
+}
+
+/* ── Timeline ───────────────────────────────────────────── */
+.suivi__timeline {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-xl);
+}
+
+.suivi__timeline-title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin: 0 0 var(--space-xl);
+    padding-bottom: var(--space-md);
+    border-bottom: var(--border-thin);
+}
+
+.suivi__timeline-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.suivi__timeline-item {
+    display: flex;
+    gap: var(--space-md);
+    position: relative;
+    padding-bottom: var(--space-xl);
+}
+
+/* Ligne verticale entre événements */
+.suivi__timeline-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 1.1rem;
+    top: 2.5rem;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-gray-200);
+}
+
+.suivi__timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.suivi__timeline-dot {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--dot-color) 15%, white);
+    color: var(--dot-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--fs-base);
+    flex-shrink: 0;
+    border: 2px solid var(--dot-color);
+    z-index: 1;
+    position: relative;
+}
+
+.suivi__timeline-item--latest .suivi__timeline-dot {
+    background: var(--dot-color);
+    color: var(--color-white);
+}
+
+.suivi__timeline-content {
+    flex: 1;
+    padding-top: 0.2rem;
+}
+
+.suivi__timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-xs);
+}
+
+.suivi__timeline-statut {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+}
+
+.suivi__timeline-date {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-400);
+    white-space: nowrap;
+}
+
+.suivi__timeline-motif {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-600);
+    margin: 0 0 var(--space-xs);
+    line-height: var(--lh-base);
+}
+
+.suivi__timeline-actor {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-400);
+}
+
+/* ── Récapitulatif ──────────────────────────────────────── */
+.suivi__recap {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-xl);
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-md));
+}
+
+.suivi__recap-title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin: 0 0 var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: var(--border-gold);
+}
+
+.suivi__recap-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin: 0;
+}
+
+.suivi__recap-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-md);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-600);
+}
+
+.suivi__recap-line dt { font-weight: var(--fw-regular); flex-shrink: 0; }
+.suivi__recap-line dd { font-weight: var(--fw-semibold); margin: 0; text-align: right; }
+
+.suivi__recap-line--separator {
+    border-top: var(--border-thin);
+    padding-top: var(--space-xs);
+}
+
+.suivi__recap-line--total {
+    padding-top: var(--space-sm);
+    border-top: var(--border-thin);
+    font-size: var(--fs-base);
+}
+
+.suivi__recap-line--total dt {
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+}
+
+.suivi__recap-line--total dd {
+    font-family: var(--font-heading);
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-bold);
+    color: var(--color-bordeaux);
+}

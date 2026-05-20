@@ -1,0 +1,198 @@
+/* ============================================================
+   Vite & Gourmand — Avis CSS
+   Chemin : src/public/assets/css/pages/avis.css
+   ============================================================ */
+
+.avis-page {
+    background: var(--color-cream);
+    padding: var(--space-xl) 0 var(--space-3xl);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+}
+
+.avis-page .container {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+/* ── Carte ──────────────────────────────────────────────── */
+.avis-card {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-2xl);
+}
+
+.avis-card__back {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-forest);
+    text-decoration: none;
+    margin-bottom: var(--space-md);
+}
+
+.avis-card__back:hover { text-decoration: underline; }
+
+.avis-card__header {
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: var(--border-thin);
+}
+
+.avis-card__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin: 0 0 var(--space-xs);
+}
+
+.avis-card__subtitle {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-500);
+    margin: 0;
+}
+
+.avis-card__subtitle strong {
+    color: var(--color-forest);
+}
+
+/* ── Alert erreur ───────────────────────────────────────── */
+.avis-alert {
+    background: #FFF0F0;
+    border: 1px solid #FFCDD2;
+    border-radius: var(--radius-md);
+    padding: var(--space-md) var(--space-lg);
+    color: var(--color-bordeaux);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    margin-bottom: var(--space-xl);
+}
+
+.avis-alert ul {
+    list-style: disc;
+    padding-left: var(--space-md);
+    margin: 0;
+}
+
+/* ── Formulaire ─────────────────────────────────────────── */
+.avis-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+}
+
+.avis-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.avis-form__label {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-forest);
+}
+
+/* ── Étoiles ────────────────────────────────────────────── */
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: var(--space-xs);
+}
+
+.star-rating__input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.star-rating__label {
+    font-size: 2.5rem;
+    color: var(--color-gray-300);
+    cursor: pointer;
+    transition: color var(--transition-fast), transform var(--transition-fast);
+    line-height: 1;
+}
+
+/* Étoile hover — depuis l'étoile jusqu'à la fin */
+.star-rating__label:hover,
+.star-rating__label:hover ~ .star-rating__label {
+    color: var(--color-gold);
+    transform: scale(1.15);
+}
+
+/* Étoile checked — depuis l'étoile jusqu'à la fin */
+.star-rating__input:checked ~ .star-rating__label {
+    color: var(--color-gold);
+}
+
+/* Focus visible RGAA */
+.star-rating__input:focus-visible + .star-rating__label {
+    outline: 2px solid var(--color-forest);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.avis-form__hint {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gold-dark);
+    font-weight: var(--fw-medium);
+    margin: 0;
+}
+
+/* ── Textarea ───────────────────────────────────────────── */
+.avis-form__textarea {
+    padding: var(--space-md);
+    border: 1.5px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    background: var(--color-gray-100);
+    font-family: var(--font-body);
+    font-size: var(--fs-base);
+    color: var(--color-text);
+    resize: vertical;
+    min-height: 120px;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    width: 100%;
+}
+
+.avis-form__textarea:focus {
+    outline: none;
+    border-color: var(--color-forest);
+    box-shadow: 0 0 0 3px rgba(6, 58, 31, 0.12);
+    background: var(--color-white);
+}
+
+.avis-form__count {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-400);
+    text-align: right;
+}
+
+/* ── Légale ─────────────────────────────────────────────── */
+.avis-form__legal {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-xs);
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-400);
+    font-style: italic;
+    margin: 0;
+}
+
+.avis-form__legal svg { flex-shrink: 0; margin-top: 2px; }
+
+/* ── Submit ─────────────────────────────────────────────── */
+.avis-form__submit {
+    width: 100%;
+    justify-content: center;
+}

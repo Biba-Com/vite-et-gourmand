@@ -1,0 +1,333 @@
+/* ============================================================
+   Vite & Gourmand — Commande CSS
+   Chemin : src/public/assets/css/pages/commande.css
+   ============================================================ */
+
+.commande-page {
+    background: var(--color-cream);
+    padding: var(--space-xl) 0 var(--space-3xl);
+    min-height: 70vh;
+}
+
+/* ── En-tête ────────────────────────────────────────────── */
+.commande-page__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xl);
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.commande-page__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin: 0;
+}
+
+.commande-page__back {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-forest);
+    text-decoration: none;
+    font-weight: var(--fw-medium);
+}
+
+.commande-page__back:hover { text-decoration: underline; }
+
+/* ── Alert erreur ───────────────────────────────────────── */
+.commande-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    margin-bottom: var(--space-xl);
+}
+
+.commande-alert--error {
+    background: #FFF0F0;
+    border: 1px solid #FFCDD2;
+    color: var(--color-bordeaux);
+}
+
+.commande-alert ul {
+    list-style: disc;
+    padding-left: var(--space-md);
+    margin: 0;
+}
+
+/* ── Layout 2 colonnes ──────────────────────────────────── */
+.commande-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: var(--space-xl);
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .commande-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Formulaire ─────────────────────────────────────────── */
+.commande-form { display: flex; flex-direction: column; gap: var(--space-xl); }
+
+.commande-section {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-xl);
+}
+
+.commande-section__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    font-family: var(--font-heading);
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin: 0 0 var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: var(--border-thin);
+}
+
+.commande-section__num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: var(--color-forest);
+    color: var(--color-white);
+    border-radius: var(--radius-full);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    flex-shrink: 0;
+}
+
+.commande-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+@media (max-width: 640px) {
+    .commande-form__row { grid-template-columns: 1fr; }
+}
+
+.commande-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-md);
+}
+
+.commande-form__field:last-child { margin-bottom: 0; }
+
+.commande-form__label {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-forest);
+}
+
+.commande-form__input,
+.commande-form__textarea {
+    padding: 0.65rem var(--space-md);
+    border: 1.5px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    background: var(--color-gray-100);
+    font-family: var(--font-body);
+    font-size: var(--fs-base);
+    color: var(--color-text);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    width: 100%;
+}
+
+.commande-form__input:focus,
+.commande-form__textarea:focus {
+    outline: none;
+    border-color: var(--color-forest);
+    box-shadow: 0 0 0 3px rgba(6, 58, 31, 0.12);
+    background: var(--color-white);
+}
+
+.commande-form__input--readonly {
+    background: var(--color-gray-200);
+    color: var(--color-gray-500);
+    cursor: not-allowed;
+}
+
+.commande-form__textarea { resize: vertical; min-height: 80px; }
+
+.commande-form__note,
+.commande-form__delivery-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-xs);
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-400);
+    margin-bottom: var(--space-md);
+}
+
+.commande-form__note a { color: var(--color-forest); }
+.commande-form__note svg,
+.commande-form__delivery-hint svg { flex-shrink: 0; margin-top: 2px; }
+
+.commande-form__submit {
+    width: 100%;
+    justify-content: center;
+    padding: var(--space-md) var(--space-xl);
+    font-size: var(--fs-base);
+}
+
+/* ── Récapitulatif ──────────────────────────────────────── */
+.commande-summary {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-xl);
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-md));
+}
+
+.commande-summary__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin: 0 0 var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: var(--border-gold);
+}
+
+.commande-summary__items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-md);
+    border-bottom: var(--border-thin);
+}
+
+.commande-summary__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-md);
+}
+
+.commande-summary__item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-text);
+}
+
+.commande-summary__item-info strong {
+    font-weight: var(--fw-semibold);
+    color: var(--color-forest);
+}
+
+.commande-summary__item-info span { color: var(--color-gray-500); }
+
+.commande-summary__item-price {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-bordeaux);
+    white-space: nowrap;
+}
+
+.commande-summary__remise {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-success);
+    padding-left: var(--space-md);
+}
+
+.commande-summary__totals {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin: 0 0 var(--space-xl);
+}
+
+.commande-summary__line {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-600);
+}
+
+.commande-summary__line dt { font-weight: var(--fw-regular); }
+.commande-summary__line dd { font-weight: var(--fw-semibold); margin: 0; }
+
+.commande-summary__line--total {
+    padding-top: var(--space-sm);
+    border-top: var(--border-thin);
+    font-size: var(--fs-base);
+}
+
+.commande-summary__line--total dt {
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+}
+
+.commande-summary__line--total dd {
+    font-family: var(--font-heading);
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-bold);
+    color: var(--color-bordeaux);
+}
+
+.commande-summary__free {
+    color: var(--color-success);
+    font-weight: var(--fw-semibold);
+}
+
+/* ── Conditions ─────────────────────────────────────────── */
+.commande-summary__conditions {
+    background: var(--color-gray-100);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+}
+
+.commande-summary__conditions-title {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin: 0 0 var(--space-sm);
+}
+
+.commande-summary__conditions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.commande-summary__conditions li {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-600);
+    line-height: var(--lh-base);
+}
