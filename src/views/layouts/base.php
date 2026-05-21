@@ -22,13 +22,11 @@ $currentPath = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
   <meta name="description" content="<?= htmlspecialchars($pageDesc, ENT_QUOTES, 'UTF-8') ?>">
   <meta name="theme-color" content="#063A1F">
 
-  <!-- SEO Canonical + hreflang -->
   <link rel="canonical" href="<?= $baseUrl . $currentPath ?>?lang=<?= $currentLang ?>">
   <link rel="alternate" hreflang="fr"        href="<?= $baseUrl . $currentPath ?>?lang=fr">
   <link rel="alternate" hreflang="en"        href="<?= $baseUrl . $currentPath ?>?lang=en">
   <link rel="alternate" hreflang="x-default" href="<?= $baseUrl . $currentPath ?>">
 
-  <!-- Open Graph -->
   <meta property="og:title"       content="<?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?>">
   <meta property="og:description" content="<?= htmlspecialchars($pageDesc,  ENT_QUOTES, 'UTF-8') ?>">
   <meta property="og:type"        content="website">
@@ -36,7 +34,6 @@ $currentPath = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
 
   <title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></title>
 
-  <!-- Favicon -->
   <link rel="icon" href="<?= $assetsBase ?>/img/logos/favicon.svg" type="image/svg+xml">
 
   <!-- Styles globaux -->
@@ -62,9 +59,11 @@ $currentPath = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
     <link rel="stylesheet" href="<?= $assetsBase ?>/css/pages/contact.css">
   <?php elseif ($currentPage === 'espace-employe'): ?>
     <link rel="stylesheet" href="<?= $assetsBase ?>/css/pages/espace-employe.css">
+  <?php elseif ($currentPage === 'espace-admin'): ?>
+    <link rel="stylesheet" href="<?= $assetsBase ?>/css/pages/espace-employe.css">
+    <link rel="stylesheet" href="<?= $assetsBase ?>/css/pages/espace-admin.css">
   <?php endif; ?>
 
-  <!-- JSON-LD Schema.org -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -93,11 +92,9 @@ $currentPath = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
 
   <?php include __DIR__ . '/../components/footer.php'; ?>
 
-  <!-- JS globaux -->
   <script src="<?= $assetsBase ?>/js/header.js" defer></script>
   <script src="<?= $assetsBase ?>/js/footer.js" defer></script>
 
-  <!-- JS conditionnels par page -->
   <?php if ($currentPage === 'accueil'): ?>
     <script src="<?= $assetsBase ?>/js/home.js" defer></script>
   <?php elseif (in_array($currentPage, ['connexion', 'inscription'])): ?>
