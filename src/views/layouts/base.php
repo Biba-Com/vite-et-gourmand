@@ -51,6 +51,8 @@ $currentPath = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
     <link rel="stylesheet" href="<?= $assetsBase ?>/css/pages/catalogue.css">
   <?php elseif ($currentPage === 'panier'): ?>
     <link rel="stylesheet" href="<?= $assetsBase ?>/css/pages/panier.css">
+  <?php elseif ($currentPage === 'commande'): ?>
+    <link rel="stylesheet" href="<?= $assetsBase ?>/css/pages/commande.css">
   <?php elseif ($currentPage === 'mes-commandes'): ?>
     <link rel="stylesheet" href="<?= $assetsBase ?>/css/pages/mes-commandes.css">
     <link rel="stylesheet" href="<?= $assetsBase ?>/css/pages/commande.css">
@@ -58,6 +60,8 @@ $currentPath = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
     <link rel="stylesheet" href="<?= $assetsBase ?>/css/pages/avis.css">
   <?php elseif ($currentPage === 'contact'): ?>
     <link rel="stylesheet" href="<?= $assetsBase ?>/css/pages/contact.css">
+  <?php elseif ($currentPage === 'espace-employe'): ?>
+    <link rel="stylesheet" href="<?= $assetsBase ?>/css/pages/espace-employe.css">
   <?php endif; ?>
 
   <!-- JSON-LD Schema.org -->
