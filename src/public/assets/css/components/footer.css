@@ -1,0 +1,414 @@
+/* ==========================================================================
+   Component: Footer
+   Path: src/public/assets/css/components/footer.css
+   BEM · Mobile-first · RGAA AA · Variables CSS exclusivement
+   ========================================================================== */
+
+/* ==========================================================================
+   FOOTER SHELL
+   ========================================================================== */
+.footer {
+  background-color: var(--color-forest);
+  color: var(--color-cream);
+  font-family: var(--font-body);
+}
+
+/* Gold separator line at top */
+.footer__separator {
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-gold) 15%,
+    var(--color-gold) 85%,
+    transparent 100%
+  );
+  opacity: 0.5;
+}
+
+/* ==========================================================================
+   MAIN SECTION — 4-column grid
+   ========================================================================== */
+.footer__main {
+  padding: var(--space-3xl) 0 var(--space-2xl);
+}
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2xl);
+}
+
+@media (min-width: 576px) {
+  .footer__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl) var(--space-2xl);
+  }
+}
+
+@media (min-width: 992px) {
+  .footer__grid {
+    grid-template-columns: 1.4fr 1fr 1.2fr 1fr;
+    gap: var(--space-xl);
+  }
+}
+
+/* ==========================================================================
+   SCROLL-IN ANIMATIONS
+   ========================================================================== */
+
+/* Initial hidden state — set by JS after IntersectionObserver fires */
+.footer__col[data-animate="footer-col"] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.55s ease,
+    transform 0.55s ease;
+}
+
+/* Visible state triggered by JS adding .is-visible */
+.footer__col.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger each column */
+.footer__col:nth-child(1) { transition-delay: 0ms; }
+.footer__col:nth-child(2) { transition-delay: 80ms; }
+.footer__col:nth-child(3) { transition-delay: 160ms; }
+.footer__col:nth-child(4) { transition-delay: 240ms; }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .footer__col[data-animate="footer-col"] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   COL 1 — Brand / Logo / Horaires
+   ========================================================================== */
+.footer__logo {
+  display: inline-block;
+  text-decoration: none;
+  margin-bottom: var(--space-md);
+}
+
+.footer__logo-text {
+  font-family: var(--font-heading);
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  font-style: italic;
+  color: var(--color-cream);
+  line-height: var(--lh-tight);
+  transition: color var(--transition-fast);
+}
+
+.footer__logo:hover .footer__logo-text,
+.footer__logo:focus-visible .footer__logo-text {
+  color: var(--color-gold);
+}
+
+.footer__logo-amp {
+  color: var(--color-gold);
+}
+
+.footer__tagline {
+  font-size: var(--fs-sm);
+  color: var(--color-cream);
+  opacity: 0.7;
+  line-height: var(--lh-relaxed);
+  margin-bottom: var(--space-lg);
+}
+
+/* Hours */
+.footer__hours-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  color: var(--color-gold);
+  margin-bottom: var(--space-md);
+}
+
+.footer__hours-icon {
+  color: var(--color-gold);
+  flex-shrink: 0;
+}
+
+.footer__hours-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.footer__hours-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  font-size: var(--fs-sm);
+}
+
+.footer__hours-row dt {
+  color: var(--color-cream);
+  opacity: 0.8;
+  min-width: 8rem;
+}
+
+.footer__hours-row dd {
+  color: var(--color-cream);
+  font-weight: var(--fw-medium);
+}
+
+/* ==========================================================================
+   COLUMN TITLES (COL 2, 3, 4)
+   ========================================================================== */
+.footer__col-title {
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  color: var(--color-gold);
+  letter-spacing: 0.02em;
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+/* ==========================================================================
+   COL 2 — Navigation rapide
+   ========================================================================== */
+.footer__nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer__nav-link {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-regular);
+  color: var(--color-cream);
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity var(--transition-fast), padding-left var(--transition-base), color var(--transition-fast);
+  display: inline-block;
+}
+
+.footer__nav-link:hover,
+.footer__nav-link:focus-visible {
+  opacity: 1;
+  color: var(--color-gold);
+  padding-left: var(--space-sm);
+}
+
+/* ==========================================================================
+   COL 3 — Contact
+   ========================================================================== */
+.footer__contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer__contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.footer__contact-icon {
+  color: var(--color-gold);
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: transform var(--transition-base);
+}
+
+.footer__contact-icon--phone {
+  color: var(--color-gold);
+}
+
+.footer__contact-icon--pin {
+  color: var(--color-gold);
+}
+
+.footer__contact-link {
+  font-size: var(--fs-base);
+  color: var(--color-cream);
+  text-decoration: none;
+  opacity: 0.85;
+  line-height: var(--lh-base);
+  transition: opacity var(--transition-fast), color var(--transition-fast);
+}
+
+.footer__contact-link:hover,
+.footer__contact-link:focus-visible {
+  opacity: 1;
+  color: var(--color-gold);
+}
+
+/* Phone — subtle pulse on hover to signal "clickable to call" */
+.footer__contact-link--tel:hover ~ svg,
+.footer__contact-item:has(.footer__contact-link--tel:hover) .footer__contact-icon--phone {
+  animation: phone-ring 0.4s ease 1;
+}
+
+@keyframes phone-ring {
+  0%   { transform: rotate(0deg); }
+  25%  { transform: rotate(12deg); }
+  50%  { transform: rotate(-10deg); }
+  75%  { transform: rotate(8deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* Maps link — external link arrow */
+.footer__contact-link--maps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.footer__maps-arrow {
+  flex-shrink: 0;
+  margin-top: 3px;
+  opacity: 0;
+  transform: translate(-4px, 4px);
+  transition: opacity var(--transition-base), transform var(--transition-base);
+}
+
+.footer__contact-link--maps:hover .footer__maps-arrow,
+.footer__contact-link--maps:focus-visible .footer__maps-arrow {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* ==========================================================================
+   COL 4 — Réseaux sociaux + Badge Bio
+   ========================================================================== */
+.footer__social-list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-xl);
+}
+
+.footer__social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid rgba(249, 249, 247, 0.35);
+  border-radius: var(--radius-full);
+  color: var(--color-cream);
+  text-decoration: none;
+  transition:
+    border-color var(--transition-base),
+    color var(--transition-fast),
+    background-color var(--transition-base),
+    transform var(--transition-fast);
+}
+
+.footer__social-btn:hover,
+.footer__social-btn:focus-visible {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+  background-color: rgba(212, 175, 55, 0.1);
+  transform: translateY(-3px);
+}
+
+/* Bio badge */
+.footer__bio-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  background-color: var(--color-bordeaux);
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.footer__bio-badge:hover,
+.footer__bio-badge:focus-visible {
+  background-color: var(--color-bordeaux-dark);
+  color: var(--color-white);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   BOTTOM BAR
+   ========================================================================== */
+.footer__bottom {
+  border-top: 1px solid rgba(249, 249, 247, 0.1);
+  padding: var(--space-lg) 0;
+}
+
+.footer__bottom-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .footer__bottom-inner {
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--space-xl);
+    text-align: left;
+  }
+}
+
+.footer__copyright {
+  font-size: var(--fs-sm);
+  color: var(--color-cream);
+  opacity: 0.6;
+  margin: 0;
+}
+
+.footer__legal-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+.footer__legal-link {
+  font-size: var(--fs-sm);
+  color: var(--color-cream);
+  opacity: 0.6;
+  text-decoration: none;
+  transition: opacity var(--transition-fast), color var(--transition-fast);
+}
+
+.footer__legal-link:hover,
+.footer__legal-link:focus-visible {
+  opacity: 1;
+  color: var(--color-gold);
+}
+
+.footer__legal-sep {
+  color: var(--color-cream);
+  opacity: 0.3;
+  font-size: var(--fs-sm);
+}

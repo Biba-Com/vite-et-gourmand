@@ -1,0 +1,351 @@
+@startuml "Vite & Gourmand - Sequence - Passer une commande"
+
+' ─────────────────────────────────────────────────────────────
+' VITE & GOURMAND COLOR PALETTE
+' ─────────────────────────────────────────────────────────────
+skinparam backgroundColor #F9F9F7
+
+skinparam participant {
+  BackgroundColor #F0F5F1
+  BorderColor     #063A1F
+  FontColor       #063A1F
+  FontSize        12
+  FontStyle       bold
+}
+
+skinparam sequence {
+  ArrowColor              #063A1F
+  LifeLineBorderColor     #800020
+  LifeLineBackgroundColor #F0F5F1
+  GroupBorderColor        #063A1F
+  GroupBackgroundColor    #F9F9F7
+  DividerBorderColor      #D4AF37
+  DividerBackgroundColor  #FFFEF0
+}
+
+skinparam note {
+  BackgroundColor #FFFEF0
+  BorderColor     #D4AF37
+  FontColor       #063A1F
+}
+
+title Sequence Diagram — Passer une commande (multi-services)\nVite & Gourmand
+
+' ─────────────────────────────────────────────────────────────
+' PARTICIPANTS
+' ─────────────────────────────────────────────────────────────
+actor       "Utilisateur"             as User
+participant "Front-end (Views)\nNavigateur" as Front
+participant "OrderController"         as Ctrl
+participant "MenuModel"               as MenuModel
+participant "ServiceModel"            as ServiceModel
+participant "OrderModel"              as OrderModel
+participant "DistanceModel\n(cache)"   as DistCache
+database    "MySQL"                   as DB
+participant "Maps API\n(external)"     as Maps
+participant "Mail Service\n(PHPMailer)" as Mail
+collections "MongoDB\n(Statistics)"   as Mongo
+
+' ─────────────────────────────────────────────────────────────
+' STEP 1 — MENU SELECTION & SERVICES CATALOG
+' ─────────────────────────────────────────────────────────────
+== 1. Sélection du menu principal ==
+
+User -> Front : Clique sur "Commander ce menu"
+activate Front
+
+Front -> Ctrl : GET /order/new?menu_id=42
+activate Ctrl
+
+note right of Ctrl
+  Generate CSRF token
+  and include in form
+end note
+
+Ctrl -> MenuModel : getMenuById(42)
+activate MenuModel
+MenuModel -> DB : SELECT * FROM menus\nWHERE id = 42 AND active = 1
+activate DB
+DB --> MenuModel : Menu data
+deactivate DB
+MenuModel --> Ctrl : Menu object
+deactivate MenuModel
+
+Ctrl -> ServiceModel : getAvailableServices()
+activate ServiceModel
+ServiceModel -> DB : SELECT * FROM services\nWHERE active = 1\nORDER BY category
+activate DB
+DB --> ServiceModel : Services list\n(menus, supplements, staff,\nequipment, drinks)
+deactivate DB
+ServiceModel --> Ctrl : Available services by category
+deactivate ServiceModel
+
+Ctrl --> Front : Order form\n+ menu details\n+ services catalog\n+ CSRF token
+deactivate Ctrl
+
+Front --> User : Display order page
+deactivate Front
+
+' ─────────────────────────────────────────────────────────────
+' STEP 2 — FORM FILLING + AVAILABILITY CHECK
+' ─────────────────────────────────────────────────────────────
+== 2. Saisie des détails de l'événement ==
+
+User -> Front : Saisit (persons, date, address, city)
+activate Front
+
+Front -> Front : Client-side validation\n(format, required fields)
+
+note right of Front
+  JS validation = UX only
+  Real security is on server
+end note
+
+Front -> Ctrl : POST /api/check-availability\n{date, csrf_token}
+activate Ctrl
+
+Ctrl -> Ctrl : Verify CSRF token
+
+Ctrl -> OrderModel : isDateAvailable(date)
+activate OrderModel
+OrderModel -> DB : SELECT COUNT(*) FROM orders\nWHERE event_date = ?\nAND status != 'cancelled'
+activate DB
+DB --> OrderModel : count
+deactivate DB
+OrderModel --> Ctrl : true / false
+deactivate OrderModel
+
+alt Date non disponible
+  Ctrl --> Front : 409 Conflict\n"Date complète"
+  Front --> User : Display error message
+else Date disponible
+  Ctrl --> Front : 200 OK
+end
+
+deactivate Ctrl
+
+' ─────────────────────────────────────────────────────────────
+' STEP 3 — SERVICES SELECTION (CART BUILDING)
+' ─────────────────────────────────────────────────────────────
+== 3. Sélection des services additionnels ==
+
+User -> Front : Adds optional services\n• Mignardises (per person)\n• 4 serveurs (per hour)\n• Vaisselle complète\n• Open-bar cocktails
+
+note right of User
+  User builds an order with
+  multiple line items, each
+  with its own pricing rule
+end note
+
+Front -> Front : Update cart locally\n(JS state management)
+
+Front --> User : Display running total\n(non-final, recalculated server-side)
+deactivate Front
+
+' ─────────────────────────────────────────────────────────────
+' STEP 4 — SECURE PRICE CALCULATION (SERVER-SIDE)
+' ─────────────────────────────────────────────────────────────
+== 4. Calcul du devis (côté serveur sécurisé) ==
+
+User -> Front : Clique "Voir le devis détaillé"
+activate Front
+
+Front -> Ctrl : POST /api/calculate-quote\n{menu_id, persons, date,\naddress, city, items[],\ncsrf_token}
+activate Ctrl
+
+Ctrl -> Ctrl : Verify CSRF token\nServer-side validation\n(sanitize, type-check)
+
+note right of Ctrl
+  Security layers:
+  1. CSRF token (anti-forgery)
+  2. Session check (authenticated)
+  3. Input sanitization
+  4. Type validation
+end note
+
+' ── Calculate menu price ──
+Ctrl -> MenuModel : getMenuById(menu_id)
+activate MenuModel
+MenuModel -> DB : SELECT base_price, min_persons
+activate DB
+DB --> MenuModel : Menu pricing
+deactivate DB
+MenuModel --> Ctrl : Menu data
+deactivate MenuModel
+
+Ctrl -> Ctrl : menu_subtotal = base_price × persons
+
+Ctrl -> Ctrl : Apply menu discount if eligible\nif persons >= min_persons + 5\nmenu_subtotal *= 0.90 (-10%)
+
+' ── Calculate each additional service ──
+loop For each item in items[]
+  Ctrl -> ServiceModel : getServicePricing(service_id)
+  activate ServiceModel
+  ServiceModel -> DB : SELECT unit_price, pricing_unit\nFROM services WHERE id = ?
+  activate DB
+  DB --> ServiceModel : Service pricing
+  deactivate DB
+  ServiceModel --> Ctrl : Pricing rule
+  deactivate ServiceModel
+  
+  Ctrl -> Ctrl : Calculate item subtotal\nbased on pricing_unit:\n• per_person\n• per_hour\n• per_unit\n• flat_rate
+end
+
+Ctrl -> Ctrl : services_subtotal = sum(items)\n(no discount on services)
+
+' ── Calculate delivery fee with cache strategy ──
+alt city != "Bordeaux"
+  Ctrl -> DistCache : getDistance(city)
+  activate DistCache
+  DistCache -> DB : SELECT distance_km\nFROM distance_cache\nWHERE city = ?
+  activate DB
+  DB --> DistCache : cached_distance OR null
+  deactivate DB
+  
+  alt Distance NOT cached
+    DistCache -> Maps : computeDistance(\n"Bordeaux", city)
+    activate Maps
+    Maps --> DistCache : distance_km
+    deactivate Maps
+    DistCache -> DB : INSERT INTO distance_cache\n(city, distance_km, cached_at)
+    activate DB
+    DB --> DistCache : OK
+    deactivate DB
+  end
+  
+  DistCache --> Ctrl : distance_km
+  deactivate DistCache
+  
+  Ctrl -> Ctrl : delivery_fee = 5€ + (0.59€ × km)
+else city == "Bordeaux"
+  Ctrl -> Ctrl : delivery_fee = 0€
+end
+
+note right of Ctrl
+  Cache strategy:
+  - Avoid paid Maps API calls
+  - Distance Bordeaux↔City rarely changes
+  - Refresh cache after 90 days
+end note
+
+' ── Compute final total ──
+Ctrl -> Ctrl : total = menu_subtotal\n      + services_subtotal\n      + delivery_fee
+
+note right of Ctrl
+  Pricing formula:
+  total = (menu × persons × discount)
+        + sum(services)
+        + delivery_fee
+
+  Discount applies ONLY on the main menu
+  (not on services: fixed costs like staff)
+end note
+
+Ctrl --> Front : Detailed quote\n{menu, services[],\ndelivery_km, delivery_fee,\ntotal, savings}
+deactivate Ctrl
+
+Front --> User : Display itemized quote\n• Menu (× persons): X€\n  - Discount: -Y€ ✨\n• Services details\n• Delivery (Z km): W€\n• TOTAL: T€
+deactivate Front
+
+' ─────────────────────────────────────────────────────────────
+' STEP 5 — ORDER CONFIRMATION WITH ERROR HANDLING
+' ─────────────────────────────────────────────────────────────
+== 5. Validation et enregistrement (avec gestion d'erreurs) ==
+
+User -> Front : Clique "Confirmer la commande"
+activate Front
+
+Front -> Ctrl : POST /order/confirm\n{order_data, csrf_token}
+activate Ctrl
+
+Ctrl -> Ctrl : Verify CSRF + session\nRecalculate total (security)\nVerify availability again
+
+note right of Ctrl
+  CRITICAL: never trust the
+  total sent by the client.
+  Always recalculate server-side.
+end note
+
+Ctrl -> OrderModel : createOrder(orderData)
+activate OrderModel
+
+OrderModel -> DB : BEGIN TRANSACTION
+
+OrderModel -> DB : INSERT INTO orders\n(user_id, event_date, address,\ncity, persons, total, status)
+activate DB
+DB --> OrderModel : order_id = 127
+deactivate DB
+
+loop For each item in items[]
+  OrderModel -> DB : INSERT INTO order_items\n(order_id, service_id,\nquantity, unit_price, subtotal)
+  activate DB
+  DB --> OrderModel : item_id
+  deactivate DB
+end
+
+alt Transaction successful
+  OrderModel -> DB : COMMIT
+  OrderModel --> Ctrl : Order created (id: 127)
+else Transaction failed
+  OrderModel -> DB : ROLLBACK
+  OrderModel --> Ctrl : Exception (DB error)
+  Ctrl --> Front : 500 Internal Server Error\n"Order could not be saved"
+  Front --> User : Display error\n"Veuillez réessayer"
+end
+
+deactivate OrderModel
+
+' ─────────────────────────────────────────────────────────────
+' STEP 6 — STATISTICS (NoSQL)
+' ─────────────────────────────────────────────────────────────
+
+Ctrl -> Mongo : insertOne({\norder_id, total,\nrevenue_by_category, date })
+activate Mongo
+Mongo --> Ctrl : Acknowledged
+deactivate Mongo
+
+' ─────────────────────────────────────────────────────────────
+' STEP 7 — EMAIL NOTIFICATIONS (NON-BLOCKING)
+' ─────────────────────────────────────────────────────────────
+== 6. Notifications par email (non-bloquant) ==
+
+Ctrl -> Mail : sendOrderConfirmation(\nuser_email, full_quote)
+activate Mail
+
+alt Mail service available
+  Mail --> Ctrl : Email sent to client
+else Mail service unavailable
+  Mail --> Ctrl : Failure (logged)
+  note right of Mail
+    Order is still valid.
+    Mail failure logged for retry.
+    Future: use queue system
+    (Redis, RabbitMQ)
+  end note
+end
+
+deactivate Mail
+
+Ctrl -> Mail : sendAdminAlert(\nadmin_email, order_summary)
+activate Mail
+Mail --> Ctrl : Email sent (or logged if failed)
+deactivate Mail
+
+' ─────────────────────────────────────────────────────────────
+' STEP 8 — CONFIRMATION RESPONSE
+' ─────────────────────────────────────────────────────────────
+
+Ctrl --> Front : HTTP 201 Created\n{order_id: 127, status: 'pending'}
+deactivate Ctrl
+
+Front --> User : Confirmation page\n"Commande #127 enregistrée"\nRedirect to /order/127
+deactivate Front
+
+note over User, Mongo
+  **Future evolutions documented but not implemented:**
+  - Payment gateway integration (Stripe / PayPal)
+  - Async mail queue with retry logic (Redis / RabbitMQ)
+  - Distance cache automatic refresh (cron job, 90 days)
+end note
+
+@enduml

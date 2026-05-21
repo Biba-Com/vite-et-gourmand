@@ -6,7 +6,7 @@
 .env
 .env.local
 
-# Composer dependencies (only the folder, not the lock file)
+# Composer dependencies (lock file IS versioned)
 vendor/
 
 # Node modules (if used)
@@ -21,18 +21,21 @@ desktop.ini
 *.log
 logs/
 
-# IDE settings
+# IDE settings (personal to each developer)
 .vscode/
-!.vscode/settings.json
 .idea/
-# Cache (ignore .cache directory; add '*.cache' if you want to ignore cache files as well)
-.cache/
-.cache/
 
-# User uploads (keep folder structure)
-src/public/assets/uploads/**
+# Cache directories
+.cache/
+*.cache
+
+# User uploads (keep folder structure with .gitkeep)
+src/public/assets/uploads/*
 !src/public/assets/uploads/.gitkeep
 
 # Build artifacts
 dist/
 build/
+
+# PlantUML default output folder
+out/

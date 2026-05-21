@@ -1,0 +1,266 @@
+/* ============================================================
+   Vite & Gourmand — Contact CSS
+   Chemin : src/public/assets/css/pages/contact.css
+   ============================================================ */
+
+/* ── Hero ───────────────────────────────────────────────── */
+.contact-hero {
+    background: linear-gradient(135deg, var(--color-forest) 0%, var(--color-forest-light) 100%);
+    padding: var(--space-2xl) 0 var(--space-xl);
+    text-align: center;
+    color: var(--color-white);
+    margin-bottom: var(--space-2xl);
+}
+
+.contact-hero__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: var(--fw-bold);
+    color: var(--color-gold);
+    margin: 0 0 var(--space-sm);
+}
+
+.contact-hero__subtitle {
+    font-family: var(--font-body);
+    font-size: var(--fs-base);
+    color: rgba(255,255,255,0.9);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: var(--lh-relaxed);
+}
+
+/* ── Layout ─────────────────────────────────────────────── */
+.contact-page {
+    background: var(--color-cream);
+    padding-bottom: var(--space-3xl);
+}
+
+.contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: var(--space-xl);
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .contact-layout { grid-template-columns: 1fr; }
+}
+
+/* ── Alert ──────────────────────────────────────────────── */
+.contact-alert {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    margin-bottom: var(--space-xl);
+}
+
+.contact-alert--success {
+    background: #EBF5EB;
+    color: var(--color-success);
+    border: 1px solid #A5D6A7;
+}
+
+.contact-alert--error {
+    background: #FFF0F0;
+    color: var(--color-bordeaux);
+    border: 1px solid #FFCDD2;
+}
+
+/* ── Formulaire ─────────────────────────────────────────── */
+.contact-form-wrapper {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-2xl);
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.contact-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.contact-form__label {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-forest);
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.contact-form__optional {
+    font-weight: var(--fw-regular);
+    color: var(--color-gray-400);
+    font-size: var(--fs-xs);
+}
+
+.contact-form__input,
+.contact-form__textarea {
+    padding: 0.75rem var(--space-md);
+    border: 1.5px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    background: var(--color-gray-100);
+    font-family: var(--font-body);
+    font-size: var(--fs-base);
+    color: var(--color-text);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    width: 100%;
+}
+
+.contact-form__input:focus,
+.contact-form__textarea:focus {
+    outline: none;
+    border-color: var(--color-forest);
+    box-shadow: 0 0 0 3px rgba(6, 58, 31, 0.12);
+    background: var(--color-white);
+}
+
+.contact-form__field--error .contact-form__input,
+.contact-form__field--error .contact-form__textarea {
+    border-color: var(--color-bordeaux);
+}
+
+.contact-form__textarea {
+    resize: vertical;
+    min-height: 150px;
+}
+
+.contact-form__error {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-bordeaux);
+    font-weight: var(--fw-medium);
+}
+
+.contact-form__count {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-400);
+    text-align: right;
+}
+
+.contact-form__rgpd {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-400);
+    margin: 0;
+    line-height: var(--lh-base);
+}
+
+.contact-form__rgpd a {
+    color: var(--color-forest);
+    text-decoration: underline;
+}
+
+.contact-form__submit {
+    width: 100%;
+    justify-content: center;
+}
+
+/* ── Infos pratiques ────────────────────────────────────── */
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-md));
+}
+
+.contact-info__card {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-xl);
+}
+
+.contact-info__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin: 0 0 var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: var(--border-gold);
+}
+
+.contact-info__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.contact-info__item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+}
+
+.contact-info__item svg {
+    color: var(--color-bordeaux);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.contact-info__item div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.contact-info__item strong {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-forest);
+}
+
+.contact-info__item span,
+.contact-info__item a {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-600);
+    text-decoration: none;
+}
+
+.contact-info__item a:hover { color: var(--color-forest); text-decoration: underline; }
+
+/* ── Horaires ───────────────────────────────────────────── */
+.contact-info__hours {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.contact-info__hours li {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-600);
+    padding: var(--space-xs) 0;
+    border-bottom: 1px solid var(--color-gray-100);
+}
+
+.contact-info__hours-closed span {
+    color: var(--color-bordeaux);
+    font-weight: var(--fw-medium);
+}

@@ -1,0 +1,403 @@
+/* ============================================================
+   Vite & Gourmand — Espace Employé CSS
+   Chemin : src/public/assets/css/pages/espace-employe.css
+   ============================================================ */
+
+.employe-page {
+    background: var(--color-cream);
+    padding: var(--space-xl) 0 var(--space-3xl);
+    min-height: 80vh;
+}
+
+/* ── En-tête ────────────────────────────────────────────── */
+.employe__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-xl);
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.employe__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin: 0 0 var(--space-xs);
+}
+
+.employe__subtitle {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-500);
+    margin: 0;
+}
+
+/* ── Alertes ────────────────────────────────────────────── */
+.employe__alert {
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    margin-bottom: var(--space-lg);
+}
+
+.employe__alert--success { background: #EBF5EB; color: var(--color-success); border: 1px solid #A5D6A7; }
+.employe__alert--error   { background: #FFF0F0; color: var(--color-bordeaux); border: 1px solid #FFCDD2; }
+
+/* ── Onglets ────────────────────────────────────────────── */
+.employe__tabs {
+    display: flex;
+    gap: var(--space-xs);
+    border-bottom: 2px solid var(--color-gray-200);
+    margin-bottom: var(--space-xl);
+    flex-wrap: wrap;
+}
+
+.employe__tab {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 0.75rem var(--space-lg);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    color: var(--color-gray-500);
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.employe__tab:hover { color: var(--color-forest); }
+
+.employe__tab--active {
+    color: var(--color-forest);
+    border-bottom-color: var(--color-forest);
+    font-weight: var(--fw-semibold);
+}
+
+.employe__tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.4rem;
+    height: 1.4rem;
+    padding: 0 var(--space-xs);
+    border-radius: var(--radius-full);
+    background: var(--color-gray-200);
+    color: var(--color-gray-600);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+}
+
+.employe__tab-badge--alert {
+    background: var(--color-bordeaux);
+    color: var(--color-white);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.7; }
+}
+
+/* ── Filtres ────────────────────────────────────────────── */
+.employe__filters {
+    display: flex;
+    gap: var(--space-md);
+    align-items: flex-end;
+    flex-wrap: wrap;
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+.employe__filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    flex: 1;
+    min-width: 180px;
+}
+
+.employe__filter-label {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.employe__filter-select,
+.employe__filter-input {
+    padding: 0.6rem var(--space-md);
+    border: 1.5px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    background: var(--color-gray-100);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-text);
+}
+
+.employe__filter-select:focus,
+.employe__filter-input:focus {
+    outline: none;
+    border-color: var(--color-forest);
+}
+
+/* ── Tableau ────────────────────────────────────────────── */
+.employe__table-wrapper {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+}
+
+.employe__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+}
+
+.employe__table thead {
+    background: var(--color-gray-100);
+    border-bottom: 2px solid var(--color-gray-200);
+}
+
+.employe__table th {
+    padding: var(--space-md) var(--space-lg);
+    text-align: left;
+    font-weight: var(--fw-semibold);
+    color: var(--color-forest);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.employe__table td {
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: var(--border-thin);
+    color: var(--color-text);
+    vertical-align: middle;
+}
+
+.employe__table-row:hover { background: var(--color-gray-100); }
+.employe__table-row:last-child td { border-bottom: none; }
+
+.employe__table-num {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+}
+
+.employe__table-total {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    color: var(--color-bordeaux);
+}
+
+.employe__client {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.employe__client strong { color: var(--color-forest); }
+.employe__client span   { color: var(--color-gray-400); font-size: var(--fs-xs); }
+
+.employe__statut-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--statut-color) 15%, white);
+    color: var(--statut-color);
+    border: 1px solid color-mix(in srgb, var(--statut-color) 30%, white);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    white-space: nowrap;
+}
+
+.employe__btn-cancel {
+    color: var(--color-bordeaux) !important;
+    border-color: var(--color-bordeaux) !important;
+    margin-left: var(--space-xs);
+}
+
+.employe__empty {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2xl);
+    text-align: center;
+    color: var(--color-gray-500);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+}
+
+/* ── Avis ───────────────────────────────────────────────── */
+.employe__avis-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.employe__avis-card {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-xl);
+}
+
+.employe__avis-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+    flex-wrap: wrap;
+}
+
+.employe__avis-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.employe__avis-header strong {
+    font-family: var(--font-body);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-semibold);
+    color: var(--color-forest);
+}
+
+.employe__avis-menu,
+.employe__avis-date {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-400);
+}
+
+.employe__avis-stars {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: 1.25rem;
+}
+
+.employe__avis-stars strong {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gold-dark);
+}
+
+.employe__avis-commentaire {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-600);
+    font-style: italic;
+    line-height: var(--lh-relaxed);
+    background: var(--color-gray-100);
+    border-left: 3px solid var(--color-gold);
+    padding: var(--space-md);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    margin-bottom: var(--space-md);
+}
+
+.employe__avis-actions {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+/* ── Modale ─────────────────────────────────────────────── */
+.employe-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+}
+
+.employe-modal--open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.employe-modal__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(6, 58, 31, 0.6);
+    backdrop-filter: blur(2px);
+}
+
+.employe-modal__panel {
+    position: relative;
+    z-index: 1;
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-2xl);
+    width: 100%;
+    max-width: 480px;
+    margin: var(--space-md);
+}
+
+.employe-modal__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin: 0 0 var(--space-lg);
+}
+
+.employe-modal__info {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-600);
+    margin-bottom: var(--space-lg);
+}
+
+.employe-modal__info strong { color: var(--color-forest); }
+
+.employe-modal__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-lg);
+}
+
+.employe-modal__field label {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-forest);
+}
+
+.employe-modal__textarea {
+    padding: var(--space-md);
+    border: 1.5px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    resize: vertical;
+    min-height: 80px;
+}
+
+.employe-modal__textarea:focus {
+    outline: none;
+    border-color: var(--color-forest);
+    box-shadow: 0 0 0 3px rgba(6, 58, 31, 0.12);
+}
+
+.employe-modal__actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: flex-end;
+}

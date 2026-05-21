@@ -1,0 +1,233 @@
+/* ============================================================
+   Vite & Gourmand — Mes Commandes CSS
+   Chemin : src/public/assets/css/pages/mes-commandes.css
+   ============================================================ */
+
+.mes-commandes-page {
+    background: var(--color-cream);
+    padding: var(--space-xl) 0 var(--space-3xl);
+    min-height: 70vh;
+}
+
+/* ── En-tête ────────────────────────────────────────────── */
+.mes-commandes__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xl);
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.mes-commandes__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin: 0;
+}
+
+/* ── Alert ──────────────────────────────────────────────── */
+.mes-commandes__alert {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    margin-bottom: var(--space-xl);
+}
+
+.mes-commandes__alert--success {
+    background: #EBF5EB;
+    color: var(--color-success);
+    border: 1px solid #A5D6A7;
+}
+
+/* ── Empty ──────────────────────────────────────────────── */
+.mes-commandes__empty {
+    text-align: center;
+    padding: var(--space-3xl) var(--space-md);
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    border: 1px dashed var(--color-gray-300);
+}
+
+.mes-commandes__empty svg {
+    color: var(--color-gray-300);
+    margin-bottom: var(--space-lg);
+}
+
+.mes-commandes__empty h2 {
+    font-family: var(--font-heading);
+    font-size: var(--fs-xl);
+    color: var(--color-forest);
+    margin-bottom: var(--space-sm);
+}
+
+.mes-commandes__empty p {
+    font-family: var(--font-body);
+    color: var(--color-gray-500);
+    margin-bottom: var(--space-xl);
+}
+
+/* ── Liste ──────────────────────────────────────────────── */
+.mes-commandes__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+/* ── Carte commande ─────────────────────────────────────── */
+.commande-card {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: box-shadow var(--transition-base);
+}
+
+.commande-card:hover { box-shadow: var(--shadow-md); }
+
+/* Header carte */
+.commande-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md) var(--space-lg);
+    background: var(--color-gray-100);
+    border-bottom: var(--border-thin);
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
+.commande-card__ref {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
+.commande-card__num {
+    font-family: var(--font-heading);
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+}
+
+.commande-card__date-created {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-400);
+}
+
+/* Badge statut */
+.commande-card__statut {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--statut-color) 15%, white);
+    color: var(--statut-color);
+    border: 1px solid color-mix(in srgb, var(--statut-color) 30%, white);
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    white-space: nowrap;
+}
+
+/* Corps carte */
+.commande-card__body {
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.commande-card__menus {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-text);
+    font-weight: var(--fw-medium);
+}
+
+.commande-card__menus svg { color: var(--color-bordeaux); flex-shrink: 0; margin-top: 2px; }
+
+.commande-card__details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+}
+
+.commande-card__detail {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-500);
+}
+
+.commande-card__detail svg { color: var(--color-forest); flex-shrink: 0; }
+
+/* Footer carte */
+.commande-card__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md) var(--space-lg);
+    border-top: var(--border-thin);
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
+.commande-card__total {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.commande-card__total-label {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-400);
+}
+
+.commande-card__total-amount {
+    font-family: var(--font-heading);
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-bold);
+    color: var(--color-bordeaux);
+}
+
+.commande-card__actions {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.commande-card__btn-annuler {
+    color: var(--color-bordeaux) !important;
+    border-color: var(--color-bordeaux) !important;
+}
+
+.commande-card__btn-annuler:hover {
+    background: var(--color-bordeaux) !important;
+    color: var(--color-white) !important;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 640px) {
+    .commande-card__footer { flex-direction: column; align-items: flex-start; }
+    .commande-card__actions { width: 100%; }
+    .commande-card__actions .btn { flex: 1; justify-content: center; }
+}

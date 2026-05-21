@@ -1,0 +1,88 @@
+@startuml "MVC Architecture - Vite & Gourmand"
+
+'──────────────────────────────────────────────────────────────
+' COLOR DEFINITIONS (must be at the top before usage)
+'──────────────────────────────────────────────────────────────
+!define PRIMARY_COLOR #063A1F
+!define SECONDARY_COLOR #800020
+!define ACCENT_COLOR #D4AF37
+!define BG_COLOR #F9F9F7
+
+!define BROWSER_COLOR #E8E8E0
+!define CONTROLLER_COLOR #A8D5BA
+!define MODEL_COLOR #7CB89F
+!define VIEW_COLOR #D4C5A0
+!define DB_COLOR #6BA876
+
+'──────────────────────────────────────────────────────────────
+' SKINPARAM CONFIGURATION
+'──────────────────────────────────────────────────────────────
+skinparam backgroundColor BG_COLOR
+skinparam DefaultFontColor #333333
+skinparam DefaultFontSize 12
+skinparam RectangleBorderColor PRIMARY_COLOR
+skinparam RectangleBorderThickness 2
+skinparam ArrowColor #666666
+skinparam ArrowThickness 2
+skinparam NoteBkgColor #FFFEF8
+skinparam NoteBorderColor PRIMARY_COLOR
+
+'──────────────────────────────────────────────────────────────
+' DIAGRAM TITLE
+'──────────────────────────────────────────────────────────────
+title MVC Architecture Pattern — Vite & Gourmand
+
+legend top
+Catering Application — Request/Response Flow
+end legend
+
+'──────────────────────────────────────────────────────────────
+' DIAGRAM CONTENT
+'──────────────────────────────────────────────────────────────
+
+' Browser / Client
+rectangle "Browser\n(Client / User)" as Browser #E8E8E0
+
+' Group: Application Core
+rectangle "src/ — Application Core" {
+  
+  rectangle "Controllers\n━━━━━━━━━━━━━━━━━━━\nBusiness logic\nRequest orchestration\n\nsrc/controllers/" as Controllers #A8D5BA
+  
+  rectangle "Models\n━━━━━━━━━━━━━━━━━━━\nDatabase access layer\nCRUD operations via PDO\n\nsrc/models/" as Models #7CB89F
+  
+  rectangle "Views\n━━━━━━━━━━━━━━━━━━━\nHTML/PHP templates\nData rendering\n\nsrc/views/" as Views #D4C5A0
+}
+
+' Database
+rectangle "Database\n━━━━━━━━━━━━━━━━━━━\nMySQL — Relational\nMongoDB — NoSQL" as Database #6BA876
+
+'──────────────────────────────────────────────────────────────
+' REQUEST/RESPONSE FLOW
+'──────────────────────────────────────────────────────────────
+Browser -right-> Controllers : (1) HTTP Request\n(e.g., GET, POST)
+Controllers -down-> Models : (2) Query Data
+Models -right-> Database : (3) SQL/NoSQL
+Database -left-> Models : Data Result
+Models -up-> Controllers : Populated Objects
+Controllers -down-> Views : (4) Pass Data
+Views -left-> Browser : (5) HTML Response
+
+'──────────────────────────────────────────────────────────────
+' EXPLANATION NOTE
+'──────────────────────────────────────────────────────────────
+note bottom
+  **MVC Request Lifecycle** — How Vite & Gourmand processes requests:
+  
+  * Browser sends HTTP request (user clicks link or submits form)
+  * Controller receives request, validates input, calls appropriate Model(s)
+  * Model(s) execute database queries via PDO or MongoDB driver
+  * Database returns data (results or errors)
+  * Model returns data object(s) to Controller
+  * Controller passes data to View
+  * View renders HTML template with data and sends response
+  * Browser receives HTML response and displays to user
+  
+  This separation ensures clean code, easy testing, and maintainability.
+end note
+
+@enduml

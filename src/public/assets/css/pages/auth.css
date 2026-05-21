@@ -1,0 +1,576 @@
+/* ==========================================================================
+   Auth Pages — Connexion + Inscription
+   Path: src/public/assets/css/pages/auth.css
+   BEM · Mobile-first · RGAA AA · Tokens CSS
+   ========================================================================== */
+
+/* ==========================================================================
+   PAGE WRAPPER
+   ========================================================================== */
+.auth-page {
+    min-height: calc(100vh - var(--header-height) - 60px);
+    display: flex;
+    align-items: center;
+    background-color: var(--color-cream);
+    padding: var(--space-2xl) 0;
+}
+
+.auth-page__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+}
+
+/* ==========================================================================
+   CARD
+   ========================================================================== */
+.auth-card {
+    background-color: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-2xl) var(--space-xl);
+    width: 100%;
+    max-width: 480px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.auth-card.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.auth-card--register {
+    max-width: 520px;
+}
+
+@media (min-width: 576px) {
+    .auth-card {
+        padding: var(--space-3xl) var(--space-2xl);
+    }
+}
+
+/* --- Icône en haut --- */
+.auth-card__icon {
+    width: 60px;
+    height: 60px;
+    background-color: var(--color-forest);
+    color: var(--color-gold);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-lg);
+}
+
+/* --- En-tête --- */
+.auth-card__header {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+}
+
+.auth-card__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin-bottom: var(--space-xs);
+}
+
+.auth-card__subtitle {
+    font-size: var(--fs-base);     /* ✅ plus lisible */
+    color: #555555;                /* ✅ plus foncé */
+    margin: 0;
+}
+
+/* --- Séparateur --- */
+.auth-card__divider {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin: var(--space-lg) 0;
+    color: var(--color-gray-400);
+    font-size: var(--fs-sm);
+}
+
+.auth-card__divider::before,
+.auth-card__divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: var(--color-gray-200);
+}
+
+/* --- Lien switch connexion/inscription --- */
+.auth-card__switch {
+    text-align: center;
+    font-size: var(--fs-base);     /* ✅ plus lisible */
+    color: var(--color-gray-500);
+    margin-top: var(--space-lg);   /* ✅ respiration après bouton */
+    margin-bottom: 0;
+}
+
+.auth-card__switch-link {
+    color: var(--color-bordeaux);
+    font-weight: var(--fw-semibold);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.auth-card__switch-link:hover,
+.auth-card__switch-link:focus-visible {
+    color: var(--color-bordeaux-dark);
+    text-decoration: underline;
+}
+
+/* --- Lien retour accueil --- */
+.auth-page__back {
+    margin: 0;
+}
+
+.auth-page__back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--fs-base);      /* ✅ plus grand que fs-sm */
+    font-weight: 700;               /* ✅ gras pour meilleure lisibilité */
+    color: var(--color-forest);     /* ✅ vert forêt — une seule déclaration */
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.auth-page__back-link:hover,
+.auth-page__back-link:focus-visible {
+    color: var(--color-forest-dark);
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   ALERTE (erreur globale)
+   ========================================================================== */
+.auth-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-sm);
+    margin-bottom: var(--space-lg);
+}
+
+.auth-alert--error {
+    background-color: rgba(198, 40, 40, 0.08);
+    border: 1px solid rgba(198, 40, 40, 0.25);
+    color: var(--color-error);
+}
+
+.auth-alert svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+/* ==========================================================================
+   FORMULAIRE
+   ========================================================================== */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+/* --- 2 colonnes prénom/nom --- */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+}
+
+@media (max-width: 400px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- Groupe champ --- */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.form-group--error .form-input {
+    border-color: var(--color-error);
+    background-color: rgba(198, 40, 40, 0.03);
+}
+
+.form-group--error .form-input:focus {
+    box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.15);
+}
+
+/* --- Label --- */
+.form-label {
+    font-family: var(--font-body);
+    font-size: var(--fs-base);     /* ✅ plus lisible */
+    font-weight: var(--fw-semibold);
+    color: #1a1a1a;                /* ✅ plus foncé */
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.form-required {
+    color: var(--color-bordeaux);
+    font-size: var(--fs-sm);
+}
+
+.form-optional {
+    color: var(--color-gray-400);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-regular);
+}
+
+/* --- Wrapper input + icône --- */
+.form-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.form-input-icon {
+    position: absolute;
+    left: var(--space-md);
+    color: var(--color-gray-400);
+    pointer-events: none;
+    z-index: 1;
+    transition: color var(--transition-fast);
+    flex-shrink: 0;
+}
+
+/* --- Input --- */
+.form-input {
+    width: 100%;
+    height: 56px;                  /* ✅ plus grand (était 50px) */
+    padding: 0 var(--space-md);
+    padding-left: calc(var(--space-md) + 18px + var(--space-sm));
+    font-family: var(--font-body);
+    font-size: 15px;               /* ✅ plus lisible */
+    color: var(--color-text);
+    background-color: var(--color-white);
+    border: 1.5px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    outline: none;
+}
+
+.form-input:focus {
+    border-color: var(--color-forest);
+    box-shadow: 0 0 0 3px rgba(6, 58, 31, 0.12);
+}
+
+.form-input:focus + .form-input-icon,
+.form-input-wrapper:focus-within .form-input-icon {
+    color: var(--color-forest);
+}
+
+.form-input::placeholder {
+    color: var(--color-gray-300);
+}
+
+.form-input--password {
+    padding-right: calc(var(--space-md) + 18px + var(--space-sm));
+}
+
+/* --- Bouton show/hide password --- */
+.form-input-toggle {
+    position: absolute;
+    right: var(--space-md);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-gray-400);
+    padding: var(--space-xs);
+    display: flex;
+    align-items: center;
+    transition: color var(--transition-fast);
+}
+
+.form-input-toggle:hover,
+.form-input-toggle:focus-visible {
+    color: var(--color-forest);
+}
+
+/* --- Message d'erreur champ --- */
+.form-error {
+    font-size: var(--fs-xs);
+    color: var(--color-error);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.form-error::before {
+    content: '⚠';
+    font-size: 11px;
+}
+
+/* --- Lien dans formulaire --- */
+.form-link {
+    color: var(--color-bordeaux);
+    font-weight: var(--fw-medium);
+    transition: color var(--transition-fast);
+}
+
+.form-link:hover {
+    color: var(--color-bordeaux-dark);
+}
+
+/* ==========================================================================
+   OPTIONS (remember me + mot de passe oublié)
+   ========================================================================== */
+.auth-form__options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+}
+
+.auth-form__forgot {
+    font-size: var(--fs-base);     /* ✅ plus lisible */
+    color: var(--color-bordeaux);
+    font-weight: var(--fw-medium);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.auth-form__forgot:hover,
+.auth-form__forgot:focus-visible {
+    color: var(--color-bordeaux-dark);
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   CHECKBOX CUSTOM
+   ========================================================================== */
+.form-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    cursor: pointer;
+}
+
+.form-checkbox__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.form-checkbox__box {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    border: 1.5px solid var(--color-gray-300);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast);
+    margin-top: 1px;
+}
+
+.form-checkbox__input:checked + .form-checkbox__box {
+    background-color: var(--color-forest);
+    border-color: var(--color-forest);
+}
+
+.form-checkbox__input:checked + .form-checkbox__box::after {
+    content: '';
+    display: block;
+    width: 5px;
+    height: 9px;
+    border: 2px solid var(--color-white);
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg) translateY(-1px);
+}
+
+.form-checkbox__input:focus-visible + .form-checkbox__box {
+    outline: 3px solid var(--color-gold);
+    outline-offset: 2px;
+}
+
+.form-checkbox__label {
+    font-size: var(--fs-base);     /* ✅ plus lisible */
+    color: var(--color-text);
+    line-height: 1.5;
+}
+
+/* ==========================================================================
+   BOUTON SUBMIT — Bordeaux (Figma)
+   ========================================================================== */
+.auth-form__submit {
+    width: 100%;
+    height: 52px;
+    font-size: var(--fs-md);
+    font-weight: var(--fw-semibold);
+    margin-top: var(--space-sm);
+    background-color: var(--color-bordeaux);  /* ✅ bordeaux #800020 */
+    color: #FFFFFF;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-family: var(--font-body);
+}
+
+.auth-form__submit:hover {
+    background-color: var(--color-bordeaux-dark);
+    transform: scale(1.01);
+}
+
+.auth-form__submit:focus-visible {
+    outline: 3px solid var(--color-gold);
+    outline-offset: 3px;
+}
+
+/* ==========================================================================
+   FORCE DU MOT DE PASSE
+   ========================================================================== */
+.password-strength {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-xs);
+}
+
+.password-strength__bar {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+}
+
+.password-strength__segment {
+    flex: 1;
+    height: 4px;
+    background-color: var(--color-gray-200);
+    border-radius: var(--radius-full);
+    transition: background-color var(--transition-base);
+}
+
+.password-strength[data-level="1"] .password-strength__segment:nth-child(1) {
+    background-color: var(--color-error);
+}
+
+.password-strength[data-level="2"] .password-strength__segment:nth-child(-n+2) {
+    background-color: var(--color-warning);
+}
+
+.password-strength[data-level="3"] .password-strength__segment:nth-child(-n+3) {
+    background-color: var(--color-gold);
+}
+
+.password-strength[data-level="4"] .password-strength__segment {
+    background-color: var(--color-success);
+}
+
+.password-strength__label {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-medium);
+    color: var(--color-gray-400);
+    white-space: nowrap;
+    min-width: 60px;
+}
+
+/* ==========================================================================
+   ANIMATION D'ENTRÉE
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    .auth-card {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+/* ============================================================
+   Vite & Gourmand — Auth CSS additions (mot de passe oublié)
+   À AJOUTER à la fin de src/public/assets/css/pages/auth.css
+   ============================================================ */
+
+/* ── Icône succès/erreur centré ─────────────────────────── */
+.auth-success-icon {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: var(--space-md);
+}
+
+/* ── Alert info (lien dev) ──────────────────────────────── */
+.auth-alert--info {
+    background: #EFF6FF;
+    border: 1px solid #BFDBFE;
+    color: #1E40AF;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    margin-bottom: var(--space-lg);
+    line-height: var(--lh-relaxed);
+}
+
+.auth-reset-link {
+    display: inline-block;
+    word-break: break-all;
+    color: #1E40AF;
+    font-size: var(--fs-xs);
+    font-family: monospace;
+    margin-top: var(--space-xs);
+    text-decoration: underline;
+}
+
+/* ── Règles mot de passe ────────────────────────────────── */
+.auth-password-rules {
+    background: var(--color-gray-100);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.auth-password-rules__title {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    color: var(--color-forest);
+    margin: 0 0 var(--space-xs);
+}
+
+.auth-password-rules ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.auth-password-rules li {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-500);
+    transition: color var(--transition-fast);
+}
+/* ── Centrage page mot de passe oublié + réinitialisation ── */
+.auth-page .auth-card__logo {
+    text-align: center;
+    margin-bottom: var(--space-lg);
+}
+
+.auth-page > .auth-card {
+    margin: 0 auto;
+}
