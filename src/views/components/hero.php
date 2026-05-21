@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Section: Hero — Page d'accueil
  * Path: src/views/components/hero.php
@@ -10,7 +11,7 @@ $currentLang = function_exists('currentLang') ? currentLang() : 'fr';
 ?>
 
 <section class="hero" aria-label="<?= $currentLang === 'en' ? 'Welcome banner' : 'Bannière d\'accueil' ?>">
-  
+
   <picture class="hero__picture">
     <img
       src="/assets/img/hero/hero-buffet-bordeaux.webp"
@@ -18,12 +19,11 @@ $currentLang = function_exists('currentLang') ? currentLang() : 'fr';
       class="hero__img"
       width="1920" height="1080"
       fetchpriority="high"
-      decoding="async"
-    >
+      decoding="async">
   </picture>
 
   <div class="container hero__container">
-    
+
     <p class="hero__tagline">
       <span class="hero__tagline-line" aria-hidden="true"></span>
       <?= $currentLang === 'en' ? 'Artisan Caterer from Bordeaux' : 'Traiteur Artisanal &amp; Bordelais' ?>
@@ -40,11 +40,13 @@ $currentLang = function_exists('currentLang') ? currentLang() : 'fr';
     </p>
 
     <div class="hero__actions">
-      <a href="/catalogue" class="hero__btn--primary" aria-label="<?= $currentLang === 'en' ? 'Discover all our gastronomic menus' : 'Découvrir tous nos menus gastronomiques' ?>">
+      <a href="/catalogue/" class="hero__btn--primary"
+        aria-label="<?= $currentLang === 'en' ? 'Discover all our gastronomic menus' : 'Découvrir tous nos menus gastronomiques' ?>">
         <?= $currentLang === 'en' ? 'Discover our Menus' : 'Découvrir nos Menus' ?>
       </a>
-      
-      <a href="/devis" class="hero__btn--secondary" aria-label="<?= $currentLang === 'en' ? 'Request a free quote for your event' : 'Demander un devis gratuit pour votre événement' ?>">
+
+      <a href="/contact/" class="hero__btn--secondary"
+        aria-label="<?= $currentLang === 'en' ? 'Request a free quote for your event' : 'Demander un devis gratuit pour votre événement' ?>">
         <?= $currentLang === 'en' ? 'Request a Quote' : 'Demander un Devis' ?>
       </a>
     </div>

@@ -5,9 +5,12 @@
  * Path: src/public/index.php
  */
 
+session_start();
+
 define('BASE_PATH', dirname(__DIR__));
 
-/* 1. Moteur i18n EN PREMIER */
+/* 1. Config */
+require BASE_PATH . '/config/database.php';
 require BASE_PATH . '/config/lang.php';
 
 /* 2. Variables de la page */

@@ -48,7 +48,7 @@ $currentLang = function_exists('currentLang') ? currentLang() : 'fr';
         <?= $currentLang === 'en' ? 'Our commitment: exceptional local products, a recognized artisan expertise and a tailor-made service to make every meal an unforgettable moment.' : 'Notre engagement : des produits locaux d\'exception, un savoir-faire reconnu et un service sur mesure pour transformer chaque repas en un moment inoubliable.' ?>
       </p>
 
-      <a href="/catalogue" class="btn btn--forest about__cta" aria-label="<?= $currentLang === 'en' ? 'Discover all our gastronomic menus and catering services' : 'Découvrir tous nos menus gastronomiques et services traiteur' ?>">
+      <a href="/catalogue/" class="btn btn--forest about__cta" aria-label="<?= $currentLang === 'en' ? 'Discover all our gastronomic menus and catering services' : 'Découvrir tous nos menus gastronomiques et services traiteur' ?>">
         <?= $currentLang === 'en' ? 'Discover our menus' : 'Découvrir nos menus' ?>
         <span aria-hidden="true">→</span>
       </a>

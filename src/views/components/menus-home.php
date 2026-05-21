@@ -56,7 +56,7 @@ $menus = [
       <h2 id="menus-home-title" class="section-header__title">
         <?= $currentLang === 'en' ? 'Our Signature Menus' : 'Nos Menus Signatures' ?>
       </h2>
-      <a href="/catalogue" class="section-header__link">
+      <a href="/catalogue/" class="section-header__link">
         <?= $currentLang === 'en' ? 'View all menus →' : 'Voir tous nos menus →' ?>
       </a>
     </div>
@@ -64,7 +64,7 @@ $menus = [
     <div class="menus-home__grid">
       <?php foreach ($menus as $menu) : ?>
         <article class="menu-card" data-animate="card-up">
-          <a href="/catalogue/<?= $menu['slug'] ?>" class="menu-card__img-wrapper" tabindex="-1" aria-hidden="true">
+          <a href="/catalogue/detail.php?slug=<?= $menu['slug'] ?>" class="menu-card__img-wrapper" tabindex="-1" aria-hidden="true">
             <img
               src="<?= $menu['image'] ?>"
               alt="<?= $currentLang === 'en' ? $menu['alt_en'] : $menu['alt_fr'] ?>"
@@ -83,14 +83,14 @@ $menus = [
 
           <div class="menu-card__body">
             <h3 class="menu-card__title">
-              <a href="/catalogue/<?= $menu['slug'] ?>" class="menu-card__title-link">
+              <a href="/catalogue/detail.php?slug=<?= $menu['slug'] ?>" class="menu-card__title-link">
                 <?= $currentLang === 'en' ? $menu['title_en'] : $menu['title_fr'] ?>
               </a>
             </h3>
             <p class="menu-card__desc">
               <?= $currentLang === 'en' ? $menu['desc_en'] : $menu['desc_fr'] ?>
             </p>
-            <a href="/catalogue/<?= $menu['slug'] ?>" class="btn btn--forest menu-card__cta">
+            <a href="/catalogue/detail.php?slug=<?= $menu['slug'] ?>" class="btn btn--forest menu-card__cta">
               <?= $currentLang === 'en' ? 'Discover the menu' : 'Découvrir le menu' ?>
             </a>
           </div>
@@ -100,7 +100,7 @@ $menus = [
 
     <!-- Lien mobile en bas (visible uniquement sur petit écran) -->
     <div class="menus-home__mobile-link">
-      <a href="/catalogue">
+      <a href="/catalogue/">
         <?= $currentLang === 'en' ? 'See all our menus →' : 'Voir tous nos menus →' ?>
       </a>
     </div>

@@ -23,7 +23,7 @@ if (!empty($_SESSION['panier'])) {
 
 $navItems = [
     'accueil'     => ['/',            'nav.accueil'],
-    'catalogue'   => ['/catalogue/', 'nav.menus'],
+    'catalogue'   => ['/catalogue', 'nav.menus'],
     'prestations' => ['/prestations','nav.prestations'],
     'engagements' => ['/engagements','nav.engagements'],
     'contact'     => ['/contact',    'nav.contact'],

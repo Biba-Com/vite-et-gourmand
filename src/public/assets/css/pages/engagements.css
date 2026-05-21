@@ -1,0 +1,443 @@
+/* ============================================================
+   Vite & Gourmand — Page Engagements CSS
+   Chemin : src/public/assets/css/pages/engagements.css
+   ============================================================ */
+
+/* ── Hero ───────────────────────────────────────────────── */
+.engagements-hero {
+    background: linear-gradient(135deg, var(--color-forest) 0%, var(--color-forest-light) 100%);
+    padding: var(--space-3xl) 0 var(--space-2xl);
+    text-align: center;
+    color: var(--color-white);
+}
+
+.engagements-hero__title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: var(--fw-bold);
+    color: var(--color-gold);
+    margin: 0 0 var(--space-sm);
+}
+
+.engagements-hero__subtitle {
+    font-family: var(--font-body);
+    font-size: var(--fs-lg);
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 650px;
+    margin: 0 auto;
+    line-height: var(--lh-relaxed);
+}
+
+/* ── Section engagement ─────────────────────────────────── */
+.engagement-section {
+    padding: var(--space-3xl) 0;
+    background: var(--color-white);
+}
+
+.engagement-section--alt {
+    background: var(--color-cream);
+}
+
+.engagement-section__header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+}
+
+.engagement-section__num {
+    font-family: var(--font-heading);
+    font-size: var(--fs-3xl);
+    font-weight: var(--fw-bold);
+    color: var(--color-gold);
+    line-height: 1;
+    flex-shrink: 0;
+    opacity: 0.5;
+}
+
+.engagement-section__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin: 0 0 var(--space-sm);
+}
+
+.engagement-section__intro {
+    font-family: var(--font-body);
+    font-size: var(--fs-base);
+    color: var(--color-gray-600);
+    line-height: var(--lh-relaxed);
+    max-width: 700px;
+    margin: 0;
+}
+
+/* ── Partenaires ────────────────────────────────────────── */
+.engagement-partners {
+    margin-bottom: var(--space-2xl);
+}
+
+.engagement-partners__title,
+.engagement-team__title,
+.engagement-certifs__title,
+.engagement-zerodechet__title,
+.engagement-philosophy__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin: 0 0 var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: var(--border-gold);
+}
+
+.engagement-partners__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+}
+
+@media (max-width: 900px) {
+    .engagement-partners__grid { grid-template-columns: 1fr; }
+}
+
+.engagement-partner-card {
+    display: flex;
+    gap: var(--space-md);
+    background: var(--color-gray-100);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    transition: box-shadow var(--transition-fast);
+}
+
+.engagement-partner-card:hover { box-shadow: var(--shadow-sm); }
+
+.engagement-partner-card__icon {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+    color: var(--color-forest);
+}
+
+.engagement-partner-card__icon img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+.engagement-partner-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.engagement-partner-card__content strong {
+    font-family: var(--font-body);
+    font-size: var(--fs-base);
+    color: var(--color-forest);
+}
+
+.engagement-partner-card__content p {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-600);
+    line-height: var(--lh-base);
+    margin: 0;
+}
+
+.engagement-partner-card__link {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-bordeaux);
+    text-decoration: none;
+    font-weight: var(--fw-medium);
+}
+
+.engagement-partner-card__link:hover { text-decoration: underline; }
+
+/* ── Stats chiffres clés ────────────────────────────────── */
+.engagement-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+    margin-top: var(--space-2xl);
+}
+
+@media (max-width: 640px) {
+    .engagement-stats { grid-template-columns: 1fr; }
+}
+
+.engagement-stat {
+    text-align: center;
+    background: var(--color-forest);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    color: var(--color-white);
+}
+
+.engagement-stat__number {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: var(--fs-3xl);
+    font-weight: var(--fw-bold);
+    color: var(--color-gold);
+    margin-bottom: var(--space-xs);
+}
+
+.engagement-stat__label {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* ── Équipe ─────────────────────────────────────────────── */
+.engagement-team { margin-bottom: var(--space-2xl); }
+
+.engagement-team__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+}
+
+@media (max-width: 900px) {
+    .engagement-team__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+    .engagement-team__grid { grid-template-columns: 1fr; }
+}
+
+.team-member-card {
+    text-align: center;
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-xl) var(--space-md);
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.team-member-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.team-member-card__photo {
+    width: 100px;
+    height: 100px;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin: 0 auto var(--space-md);
+    background: var(--color-gray-100);
+}
+
+.team-member-card__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.team-member-card__initials {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-forest);
+    color: var(--color-gold);
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-bold);
+}
+
+.team-member-card__name {
+    font-family: var(--font-heading);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
+    color: var(--color-forest);
+    margin: 0 0 var(--space-xs);
+}
+
+.team-member-card__role {
+    display: block;
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-bordeaux);
+    font-weight: var(--fw-semibold);
+    margin-bottom: var(--space-sm);
+}
+
+.team-member-card__bio {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-500);
+    line-height: var(--lh-relaxed);
+    margin: 0;
+}
+
+/* ── Philosophie ────────────────────────────────────────── */
+.engagement-philosophy {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-xl);
+}
+
+.engagement-philosophy__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.engagement-philosophy__list li {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-600);
+    line-height: var(--lh-relaxed);
+    padding-left: var(--space-lg);
+    position: relative;
+}
+
+.engagement-philosophy__list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--color-forest);
+    font-weight: var(--fw-bold);
+}
+
+.engagement-philosophy__list strong {
+    color: var(--color-forest);
+}
+
+/* ── Certifications ─────────────────────────────────────── */
+.engagement-certifs { margin-bottom: var(--space-2xl); }
+
+.engagement-certifs__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+}
+
+@media (max-width: 900px) {
+    .engagement-certifs__grid { grid-template-columns: 1fr; }
+}
+
+.certif-card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    background: var(--color-gray-100);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    border-left: 4px solid var(--color-forest);
+}
+
+.certif-card__icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-forest);
+}
+
+.certif-card__icon img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+.certif-card__content strong {
+    display: block;
+    font-family: var(--font-body);
+    font-size: var(--fs-base);
+    color: var(--color-forest);
+    margin-bottom: var(--space-xs);
+}
+
+.certif-card__content p {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-600);
+    margin: 0;
+    line-height: var(--lh-base);
+}
+
+/* ── Zéro déchet ────────────────────────────────────────── */
+.engagement-zerodechet { margin-bottom: var(--space-2xl); }
+
+.engagement-zerodechet__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+}
+
+@media (max-width: 900px) {
+    .engagement-zerodechet__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+    .engagement-zerodechet__grid { grid-template-columns: 1fr; }
+}
+
+.zerodechet-item {
+    text-align: center;
+    background: var(--color-gray-100);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    transition: transform var(--transition-fast);
+}
+
+.zerodechet-item:hover { transform: translateY(-2px); }
+
+.zerodechet-item__icon {
+    display: block;
+    font-size: 2rem;
+    margin-bottom: var(--space-sm);
+}
+
+.zerodechet-item p {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-600);
+    margin: 0;
+    line-height: var(--lh-base);
+}
+
+/* ── CTA final ──────────────────────────────────────────── */
+.engagement-cta {
+    background: var(--color-forest);
+    padding: var(--space-3xl) 0;
+    text-align: center;
+}
+
+.engagement-cta__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-bold);
+    color: var(--color-gold);
+    margin: 0 0 var(--space-sm);
+}
+
+.engagement-cta__text {
+    font-family: var(--font-body);
+    font-size: var(--fs-base);
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0 0 var(--space-xl);
+}
+
+.engagement-cta__actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}

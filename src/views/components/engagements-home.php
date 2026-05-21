@@ -1,92 +1,75 @@
 <?php
 
 /**
- * Section: Nos Engagements (homepage)
+ * Section: Nos Engagements — Teaser Home
  * Path: src/views/components/engagements-home.php
- * 3 cartes image avec overlay badge + texte
+ *
+ * Affiche un résumé des 3 engagements RSE depuis la BDD
+ * CTA → renvoie vers /engagements/
  */
 $currentLang = function_exists('currentLang') ? currentLang() : 'fr';
 
-$engagements = [
-    [
-        'image'   => '/assets/img/engagements/engagement-circuit-court.webp',
-        'alt_fr'  => 'Producteur local livrant des légumes frais de saison à Bordeaux',
-        'alt_en'  => 'Local producer delivering fresh seasonal vegetables in Bordeaux',
-        'badge'   => 'CIRCUIT COURT',
-        'title_fr' => 'Approvisionnement Local',
-        'title_en' => 'Local Sourcing',
-        'desc_fr' => 'Produits frais de Bordeaux &amp; alentour.',
-        'desc_en' => 'Fresh products from Bordeaux &amp; surroundings.',
-    ],
-    [
-        'image'   => '/assets/img/engagements/engagement-savoir-faire.webp',
-        'alt_fr'  => 'Chef artisan préparant un plat avec soin et expertise',
-        'alt_en'  => 'Artisan chef carefully preparing a dish with expertise',
-        'badge'   => 'TOP CHEFS',
-        'title_fr' => 'Savoir-Faire Artisanal',
-        'title_en' => 'Artisan Expertise',
-        'desc_fr' => '25 ans d\'excellence culinaire.',
-        'desc_en' => '25 years of culinary excellence.',
-    ],
-    [
-        'image'   => '/assets/img/engagements/engagement-certification-bio.webp',
-        'alt_fr'  => 'Plantes aromatiques biologiques cultivées localement pour nos préparations',
-        'alt_en'  => 'Locally grown organic aromatic plants for our preparations',
-        'badge'   => 'LABEL BIO',
-        'title_fr' => 'Certifié Bio',
-        'title_en' => 'Organic Certified',
-        'desc_fr' => 'Partenariat avec Bio Aïl &amp; Fenouil.',
-        'desc_en' => 'Partnership with Bio Aïl &amp; Fenouil.',
-    ],
+$engagements = [];
+try {
+    $pdo = getDbConnection();
+    $stmt = $pdo->prepare("
+        SELECT titre, contenu
+        FROM contenu_rse
+        ORDER BY ordre_affichage ASC
+    ");
+    $stmt->execute();
+    $engagements = $stmt->fetchAll();
+} catch (PDOException $e) {
+    error_log('Engagements home: ' . $e->getMessage());
+}
+
+$engagementIcons = [
+    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>',
+    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M21 3v6h-6"/><path d="M3 12a9 9 0 0 1 9-9"/></svg>',
+    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
 ];
 ?>
 
-<section class="engagements-home" aria-labelledby="engagements-home-title" data-animate="fade-up">
+<?php if (!empty($engagements)): ?>
+
+<section class="engagements-home" aria-labelledby="engagements-title" data-animate="fade-up">
     <div class="container">
 
         <div class="section-header section-header--center">
-            <h2 id="engagements-home-title" class="section-header__title">
+            <h2 id="engagements-title" class="section-header__title">
                 <?= $currentLang === 'en' ? 'Our Commitments' : 'Nos Engagements' ?>
             </h2>
             <p class="section-header__subtitle">
                 <?= $currentLang === 'en'
-                    ? 'The values that drive our cuisine every day and guarantee the excellence of our services.'
-                    : 'Les valeurs qui animent notre cuisine au quotidien et garantissent l\'excellence de nos prestations.' ?>
+                    ? 'A responsible gastronomy, rooted in our Bordeaux terroir.'
+                    : 'Une gastronomie responsable, ancrée dans notre terroir bordelais.' ?>
             </p>
         </div>
 
         <div class="engagements-home__grid">
-            <?php foreach ($engagements as $eng) : ?>
+            <?php foreach ($engagements as $i => $eng): ?>
                 <article class="engagement-card" data-animate="card-up">
-                    <img
-                        src="<?= $eng['image'] ?>"
-                        alt="<?= $currentLang === 'en' ? $eng['alt_en'] : $eng['alt_fr'] ?>"
-                        class="engagement-card__img"
-                        width="400" height="320"
-                        loading="lazy"
-                        decoding="async">
-
-                    <?php if (isset($eng['badge']) && $eng['badge']) : ?>
-                        <span class="engagement-card__badge"><?= $eng['badge'] ?></span>
-                    <?php endif; ?>
-
-                    <div class="engagement-card__content">
-                        <h3 class="engagement-card__title">
-                            <?= $currentLang === 'en' ? $eng['title_en'] : $eng['title_fr'] ?>
-                        </h3>
-                        <p class="engagement-card__desc">
-                            <?= $currentLang === 'en' ? $eng['desc_en'] : $eng['desc_fr'] ?>
-                        </p>
+                    <div class="engagement-card__icon" aria-hidden="true">
+                        <?= $engagementIcons[$i] ?? $engagementIcons[0] ?>
                     </div>
+                    <h3 class="engagement-card__title">
+                        <?= htmlspecialchars($eng['titre'], ENT_QUOTES, 'UTF-8') ?>
+                    </h3>
+                    <p class="engagement-card__text">
+                        <?= htmlspecialchars($eng['contenu'], ENT_QUOTES, 'UTF-8') ?>
+                    </p>
                 </article>
             <?php endforeach; ?>
         </div>
 
-        <div class="engagements-home__footer">
-            <a href="/engagements" class="engagements-home__link">
-                <?= $currentLang === 'en' ? 'Discover all our partners' : 'Découvrir tous nos partenaires' ?>
+        <!-- CTA vers la page complète -->
+        <div style="text-align:center;margin-top:var(--space-xl);">
+            <a href="/engagements/" class="btn btn--forest">
+                <?= $currentLang === 'en' ? 'See our commitments →' : 'Voir nos engagements →' ?>
             </a>
         </div>
 
     </div>
 </section>
+
+<?php endif; ?>

@@ -32,7 +32,7 @@ $currentLang = function_exists('currentLang') ? currentLang() : 'fr';
             </div>
         </div>
 
-        <a href="/catalogue?filter=anti-gaspi" class="btn btn--primary anti-gaspi__cta">
+       <a href="/catalogue/" class="btn btn--primary anti-gaspi__cta">
             <?= $currentLang === 'en' ? 'View offers' : 'Voir les offres' ?>
         </a>
 

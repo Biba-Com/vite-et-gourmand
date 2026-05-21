@@ -62,6 +62,8 @@ $currentPath = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
   <?php elseif ($currentPage === 'espace-admin'): ?>
     <link rel="stylesheet" href="<?= $assetsBase ?>/css/pages/espace-employe.css">
     <link rel="stylesheet" href="<?= $assetsBase ?>/css/pages/espace-admin.css">
+    <?php elseif ($currentPage === 'engagements'): ?>
+    <link rel="stylesheet" href="<?= $assetsBase ?>/css/pages/engagements.css">
   <?php endif; ?>
 
   <script type="application/ld+json">
