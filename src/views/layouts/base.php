@@ -100,7 +100,7 @@ $currentPath = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
   <?php elseif (in_array($currentPage, ['connexion', 'inscription'])): ?>
     <script src="<?= $assetsBase ?>/js/auth.js" defer></script>
   <?php elseif ($currentPage === 'catalogue'): ?>
-    <script src="<?= $assetsBase ?>/js/catalogue.js" defer></script>
+    <script src="<?= $assetsBase ?>/js/catalogue.js?v=21" defer></script>
   <?php endif; ?>
 
 </body>

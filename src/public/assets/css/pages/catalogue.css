@@ -1019,7 +1019,6 @@
 
 /* ============================================================
    Vite & Gourmand — Detail CSS additions
-   À AJOUTER à la fin de catalogue.css
    ============================================================ */
 
 /* ══════════════════════════════════════════════════════════════
@@ -1671,3 +1670,73 @@
     .cart-modal__panel { margin: var(--space-sm); max-height: 95vh; }
     .cart-modal__row { grid-template-columns: 1fr; }
 }
+
+/* ============================================================
+   Vite & Gourmand — Skeleton AJAX Catalogue
+   À AJOUTER à la fin de catalogue.css
+   ============================================================ */
+
+/* ── Animation skeleton ─────────────────────────────────── */
+@keyframes shimmer {
+    0%   { background-position: -600px 0; }
+    100% { background-position:  600px 0; }
+}
+
+.skeleton-box,
+.skeleton-line {
+    background: linear-gradient(
+        90deg,
+        var(--color-gray-200) 25%,
+        var(--color-gray-100) 50%,
+        var(--color-gray-200) 75%
+    );
+    background-size: 600px 100%;
+    animation: shimmer 1.4s infinite linear;
+    border-radius: var(--radius-sm);
+}
+
+/* Skeleton carte menu */
+.menu-card--skeleton {
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.menu-card--skeleton .menu-card__image-wrapper.skeleton-box {
+    height: 220px;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.skeleton-line {
+    height: 14px;
+    margin-bottom: var(--space-sm);
+    border-radius: var(--radius-sm);
+}
+
+.skeleton-line--title {
+    height: 20px;
+    width: 75%;
+}
+
+.skeleton-line--text  { width: 90%; }
+.skeleton-line--short { width: 50%; }
+
+/* ── Animation entrée cartes AJAX ────────────────────────── */
+@keyframes cardFadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.menu-card--animate {
+    animation: cardFadeIn 0.3s ease both;
+}
+
+/* ── Compteur résultats ──────────────────────────────────── */
+#results-count {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-500);
+    font-style: italic;
+    min-height: 1.5rem;
+    transition: opacity var(--transition-fast);
+}
+

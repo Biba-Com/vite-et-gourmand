@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Vue : Catalogue — Liste des menus (v1.2.0)
+ * Vue : Catalogue — Liste des menus (v2.0.0 — AJAX)
  * Chemin : src/views/catalogue/index.php
  *
  * Variables disponibles :
@@ -20,7 +20,6 @@ $regimes         = $regimes         ?? [];
 $allergenesList  = $allergenesList  ?? [];
 $filtres         = $filtres         ?? [];
 
-// Le panneau filtres est ouvert si l'utilisateur a déjà filtré
 $filtersOpen = !empty($filtres) && (
     !empty($filtres['id_theme']) ||
     !empty($filtres['id_regime']) ||
@@ -54,7 +53,9 @@ $allergenesExclusActifs = $filtres['allergenes_exclus'] ?? [];
     <div class="container">
 
         <!-- ── FORMULAIRE FILTRES ───────────────────────────── -->
+        <!-- ID ajouté pour AJAX : catalogue-filter-form -->
         <form
+            id="catalogue-filter-form"
             class="catalogue__filters-wrapper"
             method="GET"
             action=""
@@ -64,7 +65,6 @@ $allergenesExclusActifs = $filtres['allergenes_exclus'] ?? [];
             <!-- Ligne 1 : Recherche + Toggle filtres -->
             <div class="filter-bar">
 
-                <!-- Barre de recherche -->
                 <div class="filter-search">
                     <svg class="filter-search__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <circle cx="11" cy="11" r="8"/>
@@ -84,7 +84,6 @@ $allergenesExclusActifs = $filtres['allergenes_exclus'] ?? [];
                         autocomplete="off">
                 </div>
 
-                <!-- Bouton toggle filtres -->
                 <button
                     type="button"
                     class="filter-toggle"
@@ -184,6 +183,7 @@ $allergenesExclusActifs = $filtres['allergenes_exclus'] ?? [];
                             <?= $isEn ? 'Sort by' : 'Trier par' ?>
                         </label>
                         <select class="filter-select" id="ordre" name="ordre">
+                            <option value="default"><?= $isEn ? 'Default' : 'Par défaut' ?></option>
                             <option value="prix_asc"  <?= ($filtres['ordre'] ?? '') === 'prix_asc'  ? 'selected' : '' ?>>
                                 <?= $isEn ? 'Price ↑' : 'Prix croissant' ?>
                             </option>
@@ -196,9 +196,9 @@ $allergenesExclusActifs = $filtres['allergenes_exclus'] ?? [];
                         </select>
                     </div>
 
-                </div><!-- /.filter-advanced__grid -->
+                </div>
 
-                <!-- Allergènes à exclure (pills) -->
+                <!-- Allergènes à exclure -->
                 <div class="filter-allergenes">
                     <fieldset>
                         <legend class="filter-label">
@@ -225,144 +225,149 @@ $allergenesExclusActifs = $filtres['allergenes_exclus'] ?? [];
                     </fieldset>
                 </div>
 
-                <!-- Actions filtres -->
                 <div class="filter-advanced__actions">
-                    <a href="?" class="btn btn--ghost btn--sm">
+                    <button type="button" class="btn btn--ghost btn--sm" onclick="resetFilters()">
                         <?= $isEn ? 'Reset all' : 'Réinitialiser' ?>
-                    </a>
+                    </button>
                 </div>
 
             </div><!-- /.filter-advanced -->
 
         </form>
 
-        <!-- ── COMPTEUR ────────────────────────────────────── -->
+        <!-- ── COMPTEUR RÉSULTATS (ID pour AJAX) ────────────── -->
         <div class="catalogue__results-info" aria-live="polite">
-            <?php if (empty($menus)): ?>
-                <p class="catalogue__empty">
-                    <?= $isEn
-                        ? 'No menu matches your criteria. Try adjusting the filters.'
-                        : 'Aucun menu ne correspond à vos critères. Essayez d\'ajuster les filtres.' ?>
-                </p>
-            <?php else: ?>
-                <p class="catalogue__count">
-                    <strong><?= count($menus) ?></strong>
-                    <?= $isEn
-                        ? (count($menus) > 1 ? ' menus found' : ' menu found')
-                        : (count($menus) > 1 ? ' menus disponibles' : ' menu disponible') ?>
-                </p>
-            <?php endif; ?>
+            <span id="results-count">
+                <?php if (!empty($menus)): ?>
+                    <?= count($menus) ?> menu<?= count($menus) > 1 ? 's' : '' ?> trouvé<?= count($menus) > 1 ? 's' : '' ?>
+                <?php endif; ?>
+            </span>
         </div>
 
-        <!-- ── GRILLE MENUS ────────────────────────────────── -->
-        <?php if (!empty($menus)): ?>
-        <div class="menus-grid" role="list">
+        <!-- ── GRILLE MENUS (ID pour AJAX) ─────────────────── -->
+        <div id="menus-grid" class="menus-grid" role="list">
 
-            <?php foreach ($menus as $menu): ?>
-            <article
-                class="menu-card"
-                role="listitem"
-                aria-label="<?= htmlspecialchars($menu['titre'], ENT_QUOTES, 'UTF-8') ?>">
+            <?php if (empty($menus)): ?>
+                <div class="catalogue__empty" role="status">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <p>
+                        <?= $isEn
+                            ? 'No menu matches your criteria.'
+                            : 'Aucun menu ne correspond à vos critères.' ?>
+                    </p>
+                    <button class="btn btn--ghost btn--sm" onclick="resetFilters()">
+                        <?= $isEn ? 'Reset filters' : 'Réinitialiser les filtres' ?>
+                    </button>
+                </div>
+            <?php else: ?>
 
-                <!-- Image + badge -->
-                <a href="detail.php?slug=<?= htmlspecialchars($menu['slug'], ENT_QUOTES, 'UTF-8') ?>"
-                   class="menu-card__image-link"
-                   tabindex="-1"
-                   aria-hidden="true">
-                    <?php if (!empty($menu['image_url'])): ?>
-                        <img
-                            class="menu-card__image"
-                            src="<?= htmlspecialchars($menu['image_url'], ENT_QUOTES, 'UTF-8') ?>"
-                            alt=""
-                            loading="lazy"
-                            width="400"
-                            height="280">
-                    <?php else: ?>
-                        <div class="menu-card__image menu-card__image--placeholder" aria-hidden="true">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M3 11l19-9-9 19-2-8-8-2z"/>
-                            </svg>
+                <?php foreach ($menus as $menu): ?>
+                <article
+                    class="menu-card"
+                    role="listitem"
+                    itemscope itemtype="https://schema.org/Product"
+                    aria-label="<?= htmlspecialchars($menu['titre'], ENT_QUOTES, 'UTF-8') ?>">
+
+                    <!-- Image -->
+                    <a href="/catalogue/detail.php?slug=<?= htmlspecialchars($menu['slug'], ENT_QUOTES, 'UTF-8') ?>"
+                       class="menu-card__image-link"
+                       tabindex="-1"
+                       aria-hidden="true">
+                        <div class="menu-card__image-wrapper">
+                            <?php if (!empty($menu['image_url'])): ?>
+                                <img
+                                    class="menu-card__image"
+                                    src="<?= htmlspecialchars($menu['image_url'], ENT_QUOTES, 'UTF-8') ?>"
+                                    alt=""
+                                    loading="lazy"
+                                    width="400"
+                                    height="280"
+                                    itemprop="image">
+                            <?php else: ?>
+                                <div class="menu-card__image menu-card__image--placeholder" aria-hidden="true">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M3 11l19-9-9 19-2-8-8-2z"/>
+                                    </svg>
+                                </div>
+                            <?php endif; ?>
+                            <?php if (!empty($menu['theme_nom'])): ?>
+                                <span class="menu-card__theme-badge"
+                                      style="--theme-color: <?= htmlspecialchars($menu['theme_couleur'] ?? '#D4AF37', ENT_QUOTES, 'UTF-8') ?>">
+                                    <?= htmlspecialchars($menu['theme_nom'], ENT_QUOTES, 'UTF-8') ?>
+                                </span>
+                            <?php endif; ?>
                         </div>
-                    <?php endif; ?>
-                </a>
-
-                <!-- Corps -->
-                <div class="menu-card__body">
-
-                    <!-- Header : titre + prix -->
-                    <div class="menu-card__header">
-                        <h2 class="menu-card__title">
-                            <a
-                                href="detail.php?slug=<?= htmlspecialchars($menu['slug'], ENT_QUOTES, 'UTF-8') ?>"
-                                class="menu-card__title-link">
-                                <?= htmlspecialchars($menu['titre'], ENT_QUOTES, 'UTF-8') ?>
-                            </a>
-                        </h2>
-                        <span class="menu-card__price">
-                            <?= number_format((float) $menu['prix_par_personne'], 0, ',', ' ') ?>€
-                        </span>
-                    </div>
-
-                    <!-- Description -->
-                    <?php if (!empty($menu['description'])): ?>
-                        <p class="menu-card__description">
-                            <?= htmlspecialchars(
-                                mb_substr($menu['description'], 0, 100) . (mb_strlen($menu['description']) > 100 ? '...' : ''),
-                                ENT_QUOTES,
-                                'UTF-8'
-                            ) ?>
-                        </p>
-                    <?php endif; ?>
-
-                    <!-- Méta : personnes + thème -->
-                    <div class="menu-card__meta">
-                        <span class="menu-card__meta-item">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                <circle cx="9" cy="7" r="4"/>
-                            </svg>
-                            <?= $isEn ? 'Min.' : 'Min.' ?> <?= (int) $menu['nb_personnes_min'] ?> <?= $isEn ? 'pers.' : 'pers.' ?>
-                        </span>
-                        <?php if (!empty($menu['theme_nom'])): ?>
-                        <span class="menu-card__meta-item">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-                                <line x1="3" y1="6" x2="21" y2="6"/>
-                            </svg>
-                            <?= htmlspecialchars($menu['theme_nom'], ENT_QUOTES, 'UTF-8') ?>
-                        </span>
-                        <?php endif; ?>
-                    </div>
-
-                    <!-- Allergènes -->
-                    <?php if (!empty($menu['allergenes_resume'])): ?>
-                        <div class="menu-card__allergenes">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <circle cx="12" cy="12" r="10"/>
-                                <line x1="12" y1="8" x2="12" y2="12"/>
-                                <line x1="12" y1="16" x2="12.01" y2="16"/>
-                            </svg>
-                            <span>
-                                <?= $isEn ? 'Contains:' : 'Contient:' ?>
-                                <?= htmlspecialchars($menu['allergenes_resume'], ENT_QUOTES, 'UTF-8') ?>
-                            </span>
-                        </div>
-                    <?php endif; ?>
-
-                    <!-- CTA -->
-                    <a
-                        href="detail.php?slug=<?= htmlspecialchars($menu['slug'], ENT_QUOTES, 'UTF-8') ?>"
-                        class="menu-card__cta">
-                        <?= $isEn ? 'View details' : 'Voir le détail' ?>
                     </a>
 
-                </div>
+                    <!-- Corps -->
+                    <div class="menu-card__body">
 
-            </article>
-            <?php endforeach; ?>
+                        <div class="menu-card__header">
+                            <h2 class="menu-card__title" itemprop="name">
+                                <a href="/catalogue/detail.php?slug=<?= htmlspecialchars($menu['slug'], ENT_QUOTES, 'UTF-8') ?>"
+                                   class="menu-card__title-link">
+                                    <?= htmlspecialchars($menu['titre'], ENT_QUOTES, 'UTF-8') ?>
+                                </a>
+                            </h2>
+                            <span class="menu-card__price" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                                <span itemprop="price" content="<?= $menu['prix_par_personne'] ?>">
+                                    <?= number_format((float) $menu['prix_par_personne'], 0, ',', ' ') ?>€
+                                </span>
+                            </span>
+                        </div>
 
-        </div>
-        <?php endif; ?>
+                        <?php if (!empty($menu['description'])): ?>
+                            <p class="menu-card__description" itemprop="description">
+                                <?= htmlspecialchars(
+                                    mb_substr($menu['description'], 0, 100) . (mb_strlen($menu['description']) > 100 ? '…' : ''),
+                                    ENT_QUOTES, 'UTF-8'
+                                ) ?>
+                            </p>
+                        <?php endif; ?>
+
+                        <div class="menu-card__meta">
+                            <span class="menu-card__meta-item">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                </svg>
+                                Min. <?= (int) $menu['nb_personnes_min'] ?> pers.
+                            </span>
+                            <?php if (!empty($menu['theme_nom'])): ?>
+                            <span class="menu-card__meta-item">
+                                <?= htmlspecialchars($menu['theme_nom'], ENT_QUOTES, 'UTF-8') ?>
+                            </span>
+                            <?php endif; ?>
+                        </div>
+
+                        <?php if (!empty($menu['allergenes_resume'])): ?>
+                            <div class="menu-card__allergenes">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="8" x2="12" y2="12"/>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                </svg>
+                                <?= $isEn ? 'Contains:' : 'Contient:' ?>
+                                <?= htmlspecialchars($menu['allergenes_resume'], ENT_QUOTES, 'UTF-8') ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <a href="/catalogue/detail.php?slug=<?= htmlspecialchars($menu['slug'], ENT_QUOTES, 'UTF-8') ?>"
+                           class="menu-card__cta btn btn--primary btn--sm"
+                           aria-label="Voir le détail du menu <?= htmlspecialchars($menu['titre'], ENT_QUOTES, 'UTF-8') ?>">
+                            <?= $isEn ? 'View details' : 'Voir le détail' ?>
+                        </a>
+
+                    </div>
+                </article>
+                <?php endforeach; ?>
+
+            <?php endif; ?>
+
+        </div><!-- /#menus-grid -->
 
     </div>
 </section>

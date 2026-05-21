@@ -496,3 +496,81 @@
         transition: none;
     }
 }
+/* ============================================================
+   Vite & Gourmand — Auth CSS additions (mot de passe oublié)
+   À AJOUTER à la fin de src/public/assets/css/pages/auth.css
+   ============================================================ */
+
+/* ── Icône succès/erreur centré ─────────────────────────── */
+.auth-success-icon {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: var(--space-md);
+}
+
+/* ── Alert info (lien dev) ──────────────────────────────── */
+.auth-alert--info {
+    background: #EFF6FF;
+    border: 1px solid #BFDBFE;
+    color: #1E40AF;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    margin-bottom: var(--space-lg);
+    line-height: var(--lh-relaxed);
+}
+
+.auth-reset-link {
+    display: inline-block;
+    word-break: break-all;
+    color: #1E40AF;
+    font-size: var(--fs-xs);
+    font-family: monospace;
+    margin-top: var(--space-xs);
+    text-decoration: underline;
+}
+
+/* ── Règles mot de passe ────────────────────────────────── */
+.auth-password-rules {
+    background: var(--color-gray-100);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.auth-password-rules__title {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    color: var(--color-forest);
+    margin: 0 0 var(--space-xs);
+}
+
+.auth-password-rules ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.auth-password-rules li {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    color: var(--color-gray-500);
+    transition: color var(--transition-fast);
+}
+/* ── Centrage page mot de passe oublié + réinitialisation ── */
+.auth-page .auth-card__logo {
+    text-align: center;
+    margin-bottom: var(--space-lg);
+}
+
+.auth-page > .auth-card {
+    margin: 0 auto;
+}
