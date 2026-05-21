@@ -7,6 +7,9 @@
  * Connexion PDO MySQL sécurisée
  * Chemin : src/config/database.php
  * 
+ * Compatible en local (Laragon) et en production (Railway)
+ * Les variables d'environnement sont prioritaires en production
+ * 
  * Utilisation :
  *   require_once __DIR__ . '/../config/database.php';
  *   $pdo = getDbConnection();
@@ -28,11 +31,13 @@
 function getDbConnection(): PDO
 {
     // ── Paramètres de connexion ──────────────────────────────
-    $host    = 'localhost';
-    $dbname  = 'vite_et_gourmand';
-    $user    = 'root';
-    $pass    = '';          // Laragon : mot de passe vide par défaut
-    $port    = 3306;
+    // En production (Railway) : utilise les variables d'environnement
+    // En local (Laragon) : utilise les valeurs par défaut après ?:
+    $host    = getenv('DB_HOST') ?: 'localhost';
+    $dbname  = getenv('DB_NAME') ?: 'vite_et_gourmand';
+    $user    = getenv('DB_USER') ?: 'root';
+    $pass    = getenv('DB_PASS') ?: '';
+    $port    = getenv('DB_PORT') ?: 3306;
     $charset = 'utf8mb4';
 
     // ── DSN (Data Source Name) ───────────────────────────────
@@ -60,12 +65,11 @@ function getDbConnection(): PDO
         return $pdo;
     } catch (PDOException $e) {
         // En production : logger l'erreur, ne JAMAIS afficher le message brut
-        // error_log('Database connection failed: ' . $e->getMessage());
-        // throw new RuntimeException('Service temporairement indisponible.');
-
-        // En développement : message explicite pour debug
+        error_log('Database connection failed: ' . $e->getMessage());
+        
+        // Message générique pour l'utilisateur
         throw new PDOException(
-            'Erreur de connexion à la base de données : ' . $e->getMessage(),
+            'Erreur de connexion à la base de données. Veuillez réessayer plus tard.',
             (int) $e->getCode(),
             $e
         );
