@@ -2,13 +2,16 @@
 
 > Eco-responsible catering web application — full-stack project for the DWWM certification (ECF).
 
-![Status](https://img.shields.io/badge/status-in%20development-orange)
+![Status](https://img.shields.io/badge/status-online-success)
 ![PHP](https://img.shields.io/badge/PHP-8.3-777BB4?logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-8.4-4479A1?logo=mysql&logoColor=white)
+![Deployed](https://img.shields.io/badge/deployed-Railway-0B0D0E?logo=railway&logoColor=white)
 ![License](https://img.shields.io/badge/license-Educational-blue)
 
 Application de commande de menus traiteur événementiel pour l'entreprise Vite & Gourmand (Bordeaux).
 Engagement éco-responsable, anti-gaspillage, partenaires locaux.
+
+🌐 **Live application:** https://vite-et-gourmand-production-35bb.up.railway.app
 
 ---
 
@@ -39,15 +42,16 @@ Engagement éco-responsable, anti-gaspillage, partenaires locaux.
 | Layer              | Technology                              |
 | ------------------ | --------------------------------------- |
 | Front-end          | HTML5, CSS3, Vanilla JavaScript         |
+| Charts             | Chart.js (admin statistics)             |
 | Back-end           | PHP 8.3 with PDO                        |
-| Relational DB      | MySQL 8.4 (MariaDB via Laragon)         |
+| Relational DB      | MySQL 8.4                               |
 | Email service      | PHPMailer + Mailpit (development)       |
 | Local environment  | Laragon                                 |
-| Deployment         | fly.io                                  |
+| Deployment         | Railway (Docker + Apache)               |
 | Project management | Notion                                  |
 | Design             | Figma                                   |
 | UML diagrams       | PlantUML                                |
-| Versioning         | Git + GitHub                            |
+| Versioning         | Git + GitHub (GitFlow)                  |
 
 ---
 
@@ -58,32 +62,33 @@ Engagement éco-responsable, anti-gaspillage, partenaires locaux.
 git clone https://github.com/Biba-Com/vite-et-gourmand.git
 cd vite-et-gourmand
 
-# Configure environment variables
-cp .env.example .env
-# Then edit .env with your local credentials
-
 # Initialize the database (run in this order)
 mysql -u root < database/create.sql
 mysql -u root < database/fixtures.sql
+
+# Configure the database connection
+# Edit src/config/database.php with your local credentials
+# (Laragon defaults: host=localhost, user=root, password empty)
 ```
 
-> **Note :** Database schema v1.1.0 — includes SEO-friendly slugs on menu table.
-> No password required for root on Laragon by default.
+Then open the application via your local Laragon URL (e.g. `http://vite-et-gourmand.test/` or `http://localhost/vite-et-gourmand/src/public/`).
+
+> **Note:** The application reads database credentials from environment
+> variables in production (Railway) and falls back to local defaults
+> (Laragon) automatically. No manual switching required.
 
 ---
 
 ## 🔑 Test credentials
 
-> ⚠️ **Development only** — these are simple passwords for local testing purposes only.
-> Never use these credentials in a production environment.
+> ⚠️ **Educational project** — these credentials are provided for evaluation
+> and testing purposes.
 
-| Role     | Email                               | Password   |
-| -------- | ----------------------------------- | ---------- |
-| Admin    | admin@viteetgourmand.fr             | password   |
-| Employee | julien.martin@viteetgourmand.fr     | password   |
-| Client   | sophie.bernard@email.fr             | password   |
-| Client   | thomas.petit@email.fr               | password   |
-| Client   | claire.leroy@email.fr               | password   |
+| Role     | Email                              | Password    |
+| -------- | ---------------------------------- | ----------- |
+| Admin    | jose.viteetgourmand@gmail.com      | Password1@  |
+| Employee | julie.viteetgourmand@gmail.com     | password    |
+| Client   | sophie.lacaze@gmail.com            | password    |
 
 ---
 
@@ -207,9 +212,9 @@ This application includes features beyond the standard catering scope to support
 
 ## 🔗 Project links
 
-- 🌐 Live application: *(coming soon)*
-- 📋 Notion project board: *(coming soon)*
-- 🎨 Figma mockups: *(coming soon)*
+- 🌐 Live application: https://vite-et-gourmand-production-35bb.up.railway.app
+- 📋 Notion project board: https://www.notion.so/Certification-DWWM-3158e984c38080d68fcad936e82e1fb7
+- 🎨 Figma mockups: *(see docs/maquettes/)*
 
 ---
 
@@ -218,10 +223,10 @@ This application includes features beyond the standard catering scope to support
 ```
 vite-et-gourmand/
 ├── database/                # SQL scripts
-│   ├── create.sql           # Schema v1.1.0 (with slug on menu)
-│   └── fixtures.sql         # Demo data — 5 users, 8 menus, 20 dishes
+│   ├── create.sql           # Schema (31 tables)
+│   └── fixtures.sql         # Demo data — users, menus, dishes
 ├── docs/
-│   ├── maquettes/           # Figma exports
+│   ├── maquettes/           # Figma exports (desktop + mobile)
 │   └── uml/                 # PlantUML diagrams
 │       └── exports/         # PNG/SVG outputs
 ├── src/
@@ -231,7 +236,8 @@ vite-et-gourmand/
 │   ├── views/               # MVC — HTML/PHP templates
 │   ├── utils/               # Helper functions
 │   └── public/              # Web entry point + assets
-├── .env.example             # Environment variables template
+├── Dockerfile               # Railway deployment (PHP 8.2 + Apache)
+├── .dockerignore
 ├── .gitignore
 └── README.md
 ```
@@ -240,5 +246,5 @@ vite-et-gourmand/
 
 ## 👤 Author
 
-**Biba-Com** — Web and Mobile Web Developer student
+**AKHRIB Hassiba** — Web and Mobile Web Developer student
 DWWM certification — STUDI 2025/2026
