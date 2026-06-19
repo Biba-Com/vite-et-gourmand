@@ -50,17 +50,17 @@ $flashError    = $flashError    ?? null;
         <!-- Onglets -->
         <div class="employe__tabs" role="tablist">
             <a href="/espace-admin/?tab=employes"
-               class="employe__tab <?= $tab === 'employes' ? 'employe__tab--active' : '' ?>">
+                class="employe__tab <?= $tab === 'employes' ? 'employe__tab--active' : '' ?>">
                 👥 Employés
                 <span class="employe__tab-badge"><?= count($employes) ?></span>
             </a>
             <a href="/espace-admin/?tab=commandes"
-               class="employe__tab <?= $tab === 'commandes' ? 'employe__tab--active' : '' ?>">
+                class="employe__tab <?= $tab === 'commandes' ? 'employe__tab--active' : '' ?>">
                 📦 Commandes
                 <span class="employe__tab-badge"><?= count($commandes) ?></span>
             </a>
             <a href="/espace-admin/?tab=avis"
-               class="employe__tab <?= $tab === 'avis' ? 'employe__tab--active' : '' ?>">
+                class="employe__tab <?= $tab === 'avis' ? 'employe__tab--active' : '' ?>">
                 ⭐ Avis
                 <?php if (count($avisEnAttente) > 0): ?>
                     <span class="employe__tab-badge employe__tab-badge--alert">
@@ -69,7 +69,7 @@ $flashError    = $flashError    ?? null;
                 <?php endif; ?>
             </a>
             <a href="/espace-admin/?tab=stats"
-               class="employe__tab <?= $tab === 'stats' ? 'employe__tab--active' : '' ?>">
+                class="employe__tab <?= $tab === 'stats' ? 'employe__tab--active' : '' ?>">
                 📊 Statistiques
             </a>
         </div>
@@ -87,21 +87,21 @@ $flashError    = $flashError    ?? null;
                         ➕ Créer un compte employé
                     </h2>
                     <form method="POST" action="/espace-admin/?tab=employes"
-                          class="admin-create-form" novalidate>
+                        class="admin-create-form" novalidate>
                         <input type="hidden" name="action" value="create_employee">
 
                         <div class="admin-create-form__row">
                             <div class="admin-create-form__field">
                                 <label for="emp-prenom">Prénom *</label>
                                 <input type="text" id="emp-prenom" name="prenom"
-                                       class="admin-create-form__input"
-                                       placeholder="Julie" required>
+                                    class="admin-create-form__input"
+                                    placeholder="Julie" required>
                             </div>
                             <div class="admin-create-form__field">
                                 <label for="emp-nom">Nom *</label>
                                 <input type="text" id="emp-nom" name="nom"
-                                       class="admin-create-form__input"
-                                       placeholder="Lartigue" required>
+                                    class="admin-create-form__input"
+                                    placeholder="Lartigue" required>
                             </div>
                         </div>
 
@@ -109,8 +109,8 @@ $flashError    = $flashError    ?? null;
                             <div class="admin-create-form__field">
                                 <label for="emp-email">Email (identifiant) *</label>
                                 <input type="email" id="emp-email" name="email"
-                                       class="admin-create-form__input"
-                                       placeholder="employe@viteetgourmand.fr" required>
+                                    class="admin-create-form__input"
+                                    placeholder="employe@viteetgourmand.fr" required>
                             </div>
                             <div class="admin-create-form__field">
                                 <label for="emp-password">
@@ -120,8 +120,8 @@ $flashError    = $flashError    ?? null;
                                     </span>
                                 </label>
                                 <input type="password" id="emp-password" name="password"
-                                       class="admin-create-form__input"
-                                       placeholder="Min. 8 caractères" required minlength="8">
+                                    class="admin-create-form__input"
+                                    placeholder="Min. 8 caractères" required minlength="8">
                             </div>
                         </div>
 
@@ -151,45 +151,45 @@ $flashError    = $flashError    ?? null;
                         </thead>
                         <tbody>
                             <?php foreach ($employes as $emp): ?>
-                            <tr class="employe__table-row">
-                                <td>
-                                    <strong><?= htmlspecialchars($emp['prenom'] . ' ' . $emp['nom'], ENT_QUOTES, 'UTF-8') ?></strong>
-                                </td>
-                                <td><?= htmlspecialchars($emp['email'], ENT_QUOTES, 'UTF-8') ?></td>
-                                <td>
-                                    <span class="employe__statut-badge"
-                                          style="--statut-color: <?= $emp['role'] === 'admin' ? '#D4AF37' : '#3B82F6' ?>">
-                                        <?= $emp['role'] === 'admin' ? '👑 Admin' : '🧑‍🍳 Employé' ?>
-                                    </span>
-                                </td>
-                                <td><?= (new DateTime($emp['created_at']))->format('d/m/Y') ?></td>
-                                <td>
-                                    <?php if ($emp['is_active']): ?>
-                                        <span style="color:var(--color-success);font-weight:600;">✅ Actif</span>
-                                    <?php else: ?>
-                                        <span style="color:var(--color-bordeaux);font-weight:600;">🔴 Inactif</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <?php if ($emp['role'] !== 'admin'): ?>
-                                        <form method="POST" action="/espace-admin/?tab=employes"
-                                              style="display:inline;">
-                                            <input type="hidden" name="action" value="toggle_employe">
-                                            <input type="hidden" name="id_utilisateur"
-                                                   value="<?= $emp['id_utilisateur'] ?>">
-                                            <input type="hidden" name="new_status"
-                                                   value="<?= $emp['is_active'] ? '0' : '1' ?>">
-                                            <button type="submit"
+                                <tr class="employe__table-row">
+                                    <td>
+                                        <strong><?= htmlspecialchars($emp['prenom'] . ' ' . $emp['nom'], ENT_QUOTES, 'UTF-8') ?></strong>
+                                    </td>
+                                    <td><?= htmlspecialchars($emp['email'], ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td>
+                                        <span class="employe__statut-badge"
+                                            style="--statut-color: <?= $emp['role'] === 'admin' ? '#D4AF37' : '#3B82F6' ?>">
+                                            <?= $emp['role'] === 'admin' ? '👑 Admin' : '🧑‍🍳 Employé' ?>
+                                        </span>
+                                    </td>
+                                    <td><?= (new DateTime($emp['created_at']))->format('d/m/Y') ?></td>
+                                    <td>
+                                        <?php if ($emp['is_active']): ?>
+                                            <span style="color:var(--color-success);font-weight:600;">✅ Actif</span>
+                                        <?php else: ?>
+                                            <span style="color:var(--color-bordeaux);font-weight:600;">🔴 Inactif</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($emp['role'] !== 'admin'): ?>
+                                            <form method="POST" action="/espace-admin/?tab=employes"
+                                                style="display:inline;">
+                                                <input type="hidden" name="action" value="toggle_employe">
+                                                <input type="hidden" name="id_utilisateur"
+                                                    value="<?= $emp['id_utilisateur'] ?>">
+                                                <input type="hidden" name="new_status"
+                                                    value="<?= $emp['is_active'] ? '0' : '1' ?>">
+                                                <button type="submit"
                                                     class="btn btn--sm <?= $emp['is_active'] ? 'employe__btn-cancel' : 'btn--primary' ?>"
                                                     onclick="return confirm('<?= $emp['is_active'] ? 'Désactiver ce compte ?' : 'Réactiver ce compte ?' ?>')">
-                                                <?= $emp['is_active'] ? '🔴 Désactiver' : '✅ Réactiver' ?>
-                                            </button>
-                                        </form>
-                                    <?php else: ?>
-                                        <span style="color:var(--color-gray-400);font-size:var(--fs-xs);">Protégé</span>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
+                                                    <?= $emp['is_active'] ? '🔴 Désactiver' : '✅ Réactiver' ?>
+                                                </button>
+                                            </form>
+                                        <?php else: ?>
+                                            <span style="color:var(--color-gray-400);font-size:var(--fs-xs);">Protégé</span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
@@ -219,9 +219,9 @@ $flashError    = $flashError    ?? null;
                 <div class="employe__filter-group">
                     <label class="employe__filter-label" for="filtre-client">Client</label>
                     <input type="text" id="filtre-client" name="client"
-                           class="employe__filter-input"
-                           value="<?= htmlspecialchars($filtreClient, ENT_QUOTES, 'UTF-8') ?>"
-                           placeholder="Nom, prénom ou email...">
+                        class="employe__filter-input"
+                        value="<?= htmlspecialchars($filtreClient, ENT_QUOTES, 'UTF-8') ?>"
+                        placeholder="Nom, prénom ou email...">
                 </div>
                 <button type="submit" class="btn btn--primary btn--sm">🔍 Filtrer</button>
                 <a href="/espace-admin/?tab=commandes" class="btn btn--ghost btn--sm">Réinitialiser</a>
@@ -234,9 +234,14 @@ $flashError    = $flashError    ?? null;
                     <table class="employe__table">
                         <thead>
                             <tr>
-                                <th>#</th><th>Client</th><th>Menu</th>
-                                <th>Événement</th><th>Pers.</th>
-                                <th>Total</th><th>Statut</th><th>Actions</th>
+                                <th>#</th>
+                                <th>Client</th>
+                                <th>Menu</th>
+                                <th>Événement</th>
+                                <th>Pers.</th>
+                                <th>Total</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -247,38 +252,38 @@ $flashError    = $flashError    ?? null;
                                 $nextLabel  = $nextStatut ? ($statutLabels[$nextStatut]['label'] ?? $nextStatut) : null;
                                 $dateEvt    = new DateTime($commande['date_evenement']);
                             ?>
-                            <tr class="employe__table-row">
-                                <td class="employe__table-num">#<?= str_pad($commande['id_commande'], 4, '0', STR_PAD_LEFT) ?></td>
-                                <td>
-                                    <div class="employe__client">
-                                        <strong><?= htmlspecialchars($commande['prenom'] . ' ' . $commande['nom'], ENT_QUOTES, 'UTF-8') ?></strong>
-                                        <span><?= htmlspecialchars($commande['email'], ENT_QUOTES, 'UTF-8') ?></span>
-                                    </div>
-                                </td>
-                                <td><?= htmlspecialchars($commande['menus_titres'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= $dateEvt->format('d/m/Y') ?><br><small><?= htmlspecialchars($commande['ville_livraison'], ENT_QUOTES, 'UTF-8') ?></small></td>
-                                <td><?= (int) $commande['nb_personnes'] ?></td>
-                                <td class="employe__table-total"><?= number_format((float) $commande['total'], 2, ',', ' ') ?> €</td>
-                                <td>
-                                    <span class="employe__statut-badge" style="--statut-color: <?= $statutInfo['color'] ?>">
-                                        <?= $statutInfo['label'] ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <?php if ($nextStatut && $statut !== 'cancelled'): ?>
-                                        <button type="button" class="btn btn--primary btn--sm"
+                                <tr class="employe__table-row">
+                                    <td class="employe__table-num">#<?= str_pad($commande['id_commande'], 4, '0', STR_PAD_LEFT) ?></td>
+                                    <td>
+                                        <div class="employe__client">
+                                            <strong><?= htmlspecialchars($commande['prenom'] . ' ' . $commande['nom'], ENT_QUOTES, 'UTF-8') ?></strong>
+                                            <span><?= htmlspecialchars($commande['email'], ENT_QUOTES, 'UTF-8') ?></span>
+                                        </div>
+                                    </td>
+                                    <td><?= htmlspecialchars($commande['menus_titres'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td><?= $dateEvt->format('d/m/Y') ?><br><small><?= htmlspecialchars($commande['ville_livraison'], ENT_QUOTES, 'UTF-8') ?></small></td>
+                                    <td><?= (int) $commande['nb_personnes'] ?></td>
+                                    <td class="employe__table-total"><?= number_format((float) $commande['total'], 2, ',', ' ') ?> €</td>
+                                    <td>
+                                        <span class="employe__statut-badge" style="--statut-color: <?= $statutInfo['color'] ?>">
+                                            <?= $statutInfo['label'] ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <?php if ($nextStatut && $statut !== 'cancelled'): ?>
+                                            <button type="button" class="btn btn--primary btn--sm"
                                                 onclick="openStatutModal(<?= $commande['id_commande'] ?>, '<?= $nextStatut ?>', '<?= htmlspecialchars($nextLabel, ENT_QUOTES, 'UTF-8') ?>', 'admin')">
-                                            ➡️ <?= $nextLabel ?>
-                                        </button>
-                                    <?php endif; ?>
-                                    <?php if (in_array($statut, ['pending', 'confirmed'])): ?>
-                                        <button type="button" class="btn btn--ghost btn--sm employe__btn-cancel"
+                                                ➡️ <?= $nextLabel ?>
+                                            </button>
+                                        <?php endif; ?>
+                                        <?php if (in_array($statut, ['pending', 'confirmed'])): ?>
+                                            <button type="button" class="btn btn--ghost btn--sm employe__btn-cancel"
                                                 onclick="openStatutModal(<?= $commande['id_commande'] ?>, 'cancelled', 'Annulée', 'admin')">
-                                            ❌ Annuler
-                                        </button>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
+                                                ❌ Annuler
+                                            </button>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
@@ -335,8 +340,17 @@ $flashError    = $flashError    ?? null;
         <?php if ($tab === 'stats'): ?>
 
             <div class="admin-stats">
-                <h2 class="admin-stats__title">📊 Commandes & Chiffre d'affaires par menu</h2>
+                <div class="admin-stats__header">
+                    <h2 class="admin-stats__title">📊 Commandes & Chiffre d'affaires par menu</h2>
 
+                    <!-- Bouton de rafraîchissement des stats (MySQL → MongoDB) -->
+                    <form method="POST" action="/espace-admin/?tab=stats" class="admin-stats__refresh">
+                        <input type="hidden" name="action" value="refresh_stats">
+                        <button type="submit" class="btn-refresh-stats">
+                            ↻ Rafraîchir les statistiques
+                        </button>
+                    </form>
+                </div>
                 <!-- Tableau stats -->
                 <div class="employe__table-wrapper">
                     <table class="employe__table">
@@ -349,19 +363,19 @@ $flashError    = $flashError    ?? null;
                         </thead>
                         <tbody>
                             <?php foreach ($statsMenus as $stat): ?>
-                            <tr class="employe__table-row">
-                                <td><strong><?= htmlspecialchars($stat['titre'], ENT_QUOTES, 'UTF-8') ?></strong></td>
-                                <td><?= (int) $stat['nb_commandes'] ?></td>
-                                <td class="employe__table-total">
-                                    <?= number_format((float) ($stat['ca_total'] ?? 0), 2, ',', ' ') ?> €
-                                </td>
-                            </tr>
+                                <tr class="employe__table-row">
+                                    <td><strong><?= htmlspecialchars($stat['titre'], ENT_QUOTES, 'UTF-8') ?></strong></td>
+                                    <td><?= (int) $stat['nb_commandes'] ?></td>
+                                    <td class="employe__table-total">
+                                        <?= number_format((float) ($stat['ca_total'] ?? 0), 2, ',', ' ') ?> €
+                                    </td>
+                                </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Graphique en barres (Canvas JS) -->
+              <!-- Graphique en barres (Canvas JS) -->
                 <div class="admin-chart">
                     <h3 class="admin-chart__title">Nombre de commandes par menu</h3>
                     <canvas id="chartCommandes" height="300" aria-label="Graphique commandes par menu" role="img"></canvas>
@@ -380,57 +394,63 @@ $flashError    = $flashError    ?? null;
             <!-- Chart.js -->
             <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
             <script>
-            (function () {
-                const labels = <?= json_encode(array_column($statsMenus, 'titre')) ?>;
-                const data   = <?= json_encode(array_map('intval', array_column($statsMenus, 'nb_commandes'))) ?>;
-                const ca     = <?= json_encode(array_map('floatval', array_column($statsMenus, 'ca_total'))) ?>;
+                (function() {
+                    const labels = <?= json_encode(array_column($statsMenus, 'titre')) ?>;
+                    const data = <?= json_encode(array_map('intval', array_column($statsMenus, 'nb_commandes'))) ?>;
+                    const ca = <?= json_encode(array_map('floatval', array_column($statsMenus, 'ca_total'))) ?>;
 
-                const ctx = document.getElementById('chartCommandes');
-                if (!ctx) return;
+                    const ctx = document.getElementById('chartCommandes');
+                    if (!ctx) return;
 
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Nombre de commandes',
-                            data: data,
-                            backgroundColor: 'rgba(6, 58, 31, 0.7)',
-                            borderColor: '#063A1F',
-                            borderWidth: 1,
-                            borderRadius: 6,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    afterLabel: (ctx) => {
-                                        const caVal = ca[ctx.dataIndex] || 0;
-                                        return 'CA : ' + caVal.toLocaleString('fr-FR', {
-                                            minimumFractionDigits: 2
-                                        }) + ' €';
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Nombre de commandes',
+                                data: data,
+                                backgroundColor: 'rgba(6, 58, 31, 0.7)',
+                                borderColor: '#063A1F',
+                                borderWidth: 1,
+                                borderRadius: 6,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        afterLabel: (ctx) => {
+                                            const caVal = ca[ctx.dataIndex] || 0;
+                                            return 'CA : ' + caVal.toLocaleString('fr-FR', {
+                                                minimumFractionDigits: 2
+                                            }) + ' €';
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        stepSize: 1
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        maxRotation: 30,
+                                        font: {
+                                            size: 11
+                                        }
                                     }
                                 }
                             }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: { stepSize: 1 }
-                            },
-                            x: {
-                                ticks: {
-                                    maxRotation: 30,
-                                    font: { size: 11 }
-                                }
-                            }
                         }
-                    }
-                });
-            })();
+                    });
+                })();
             </script>
 
         <?php endif; ?>
@@ -453,8 +473,8 @@ $flashError    = $flashError    ?? null;
             <div class="employe-modal__field">
                 <label for="modal-motif">Motif / Note interne</label>
                 <textarea id="modal-motif" name="motif" rows="3"
-                          class="employe-modal__textarea"
-                          placeholder="Raison du changement..."></textarea>
+                    class="employe-modal__textarea"
+                    placeholder="Raison du changement..."></textarea>
             </div>
             <div class="employe-modal__actions">
                 <button type="submit" class="btn btn--primary">✅ Confirmer</button>
@@ -465,29 +485,29 @@ $flashError    = $flashError    ?? null;
 </div>
 
 <script>
-function openStatutModal(id, statut, label, space) {
-    document.getElementById('modal-id-commande').value    = id;
-    document.getElementById('modal-nouveau-statut').value = statut;
-    document.getElementById('modal-statut-label').textContent = label;
-    document.getElementById('modal-motif').value = '';
-    if (space === 'admin') {
-        document.getElementById('statut-form').action = '/espace-admin/?tab=commandes';
+    function openStatutModal(id, statut, label, space) {
+        document.getElementById('modal-id-commande').value = id;
+        document.getElementById('modal-nouveau-statut').value = statut;
+        document.getElementById('modal-statut-label').textContent = label;
+        document.getElementById('modal-motif').value = '';
+        if (space === 'admin') {
+            document.getElementById('statut-form').action = '/espace-admin/?tab=commandes';
+        }
+        const modal = document.getElementById('statut-modal');
+        modal.setAttribute('aria-hidden', 'false');
+        modal.classList.add('employe-modal--open');
+        document.body.style.overflow = 'hidden';
+        document.getElementById('modal-motif').focus();
     }
-    const modal = document.getElementById('statut-modal');
-    modal.setAttribute('aria-hidden', 'false');
-    modal.classList.add('employe-modal--open');
-    document.body.style.overflow = 'hidden';
-    document.getElementById('modal-motif').focus();
-}
 
-function closeStatutModal() {
-    const modal = document.getElementById('statut-modal');
-    modal.setAttribute('aria-hidden', 'true');
-    modal.classList.remove('employe-modal--open');
-    document.body.style.overflow = '';
-}
+    function closeStatutModal() {
+        const modal = document.getElementById('statut-modal');
+        modal.setAttribute('aria-hidden', 'true');
+        modal.classList.remove('employe-modal--open');
+        document.body.style.overflow = '';
+    }
 
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeStatutModal();
-});
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeStatutModal();
+    });
 </script>

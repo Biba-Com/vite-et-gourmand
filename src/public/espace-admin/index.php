@@ -283,6 +283,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: /espace-admin/?tab=avis');
         exit;
     }
+
+    // ── Rafraîchir les statistiques (MySQL → MongoDB) ─
+    // Recalcule le résumé "commandes par menu" depuis MySQL
+    // et le réécrit dans MongoDB via le composant StatsRepository.
+    // C'est l'équivalent, en un clic, du script sync_stats.php.
+    if ($action === 'refresh_stats') {
+        try {
+            // 1) Lire les chiffres à jour depuis MySQL
+            $sqlSync = "
+                SELECT
+                    m.id_menu,
+                    m.titre,
+                    COUNT(lc.id_ligne)              AS nb_commandes,
+                    COALESCE(SUM(lc.sous_total), 0) AS ca_total
+                FROM menu m
+                LEFT JOIN ligne_commande lc ON m.id_menu = lc.id_menu
+                LEFT JOIN commande c        ON lc.id_commande = c.id_commande
+                    AND c.statut NOT IN ('cancelled')
+                GROUP BY m.id_menu, m.titre
+                ORDER BY nb_commandes DESC
+            ";
+            $lignesSync = $pdo->query($sqlSync)->fetchAll();
+
+            // 2) Réécrire dans MongoDB via le composant NoSQL
+            $repoSync = new StatsRepository(getMongoManager(), getMongoDbName());
+            $repoSync->saveMenuStats($lignesSync);
+
+            $_SESSION['flash_success'] = 'Statistiques rafraîchies depuis les commandes actuelles.';
+        } catch (Exception $e) {
+            error_log('Refresh stats MongoDB : ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'Impossible de rafraîchir les statistiques pour le moment.';
+        }
+        header('Location: /espace-admin/?tab=stats');
+        exit;
+    }
 }
 
 // ── Affichage ────────────────────────────────────────────
