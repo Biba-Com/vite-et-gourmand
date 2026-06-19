@@ -11,6 +11,8 @@
 session_start();
 
 require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../config/mongodb.php';
+require_once __DIR__ . '/../../models/StatsRepository.php';
 require_once __DIR__ . '/../../config/lang.php';
 require_once __DIR__ . '/../../controllers/AuthController.php';
 require_once __DIR__ . '/../../models/UserModel.php';
@@ -35,8 +37,14 @@ $userModel = new UserModel($pdo);
 // ── Messages flash ───────────────────────────────────────
 $flashSuccess = null;
 $flashError   = null;
-if (!empty($_SESSION['flash_success'])) { $flashSuccess = $_SESSION['flash_success']; unset($_SESSION['flash_success']); }
-if (!empty($_SESSION['flash_error']))   { $flashError   = $_SESSION['flash_error'];   unset($_SESSION['flash_error']); }
+if (!empty($_SESSION['flash_success'])) {
+    $flashSuccess = $_SESSION['flash_success'];
+    unset($_SESSION['flash_success']);
+}
+if (!empty($_SESSION['flash_error'])) {
+    $flashError   = $_SESSION['flash_error'];
+    unset($_SESSION['flash_error']);
+}
 
 // ── Onglet actif ─────────────────────────────────────────
 $tab  = $_GET['tab'] ?? 'employes';
@@ -54,26 +62,24 @@ $stmtEmployes = $pdo->prepare("
 $stmtEmployes->execute();
 $employes = $stmtEmployes->fetchAll();
 
-// ── Stats commandes par menu ─────────────────────────────
-$stmtStats = $pdo->prepare("
-    SELECT
-        m.titre,
-        COUNT(lc.id_ligne)   AS nb_commandes,
-        SUM(lc.sous_total)   AS ca_total
-    FROM menu m
-    LEFT JOIN ligne_commande lc ON m.id_menu = lc.id_menu
-    LEFT JOIN commande c        ON lc.id_commande = c.id_commande
-        AND c.statut NOT IN ('cancelled')
-    GROUP BY m.id_menu, m.titre
-    ORDER BY nb_commandes DESC
-");
-$stmtStats->execute();
-$statsMenus = $stmtStats->fetchAll();
+// ── Stats commandes par menu (source : MongoDB / NoSQL) ──
+// Les statistiques sont lues depuis MongoDB via le composant
+// d'accès dédié StatsRepository. Les données y sont alimentées
+// par le script sync_stats.php (résumé calculé depuis MySQL).
+$statsMenus = [];
+try {
+    $statsRepo  = new StatsRepository(getMongoManager(), getMongoDbName());
+    $statsMenus = $statsRepo->getCommandesParMenu();
+} catch (Exception $e) {
+    // Si MongoDB est injoignable, on n'empêche pas la page de s'afficher :
+    // le graphique sera simplement vide, et l'erreur est journalisée.
+    error_log('Stats MongoDB indisponibles : ' . $e->getMessage());
+}
 
 // ── Commandes + Avis (réutiliser logique employé) ────────
 $filtreStatut = trim(strip_tags($_GET['statut'] ?? ''));
 $filtreClient = trim(strip_tags($_GET['client'] ?? ''));
-$statutsValides = ['pending','confirmed','in_preparation','in_delivery','completed','cancelled'];
+$statutsValides = ['pending', 'confirmed', 'in_preparation', 'in_delivery', 'completed', 'cancelled'];
 
 $sqlCmd = "
     SELECT
