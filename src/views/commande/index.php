@@ -322,15 +322,19 @@ $sousNet = $sousTotal - $totalRemises;
         const total     = sousNet + frais;
 
         if (hint) {
-            hint.innerHTML = isBordeaux
+            hint.textContent = isBordeaux
                 ? '🎉 <?= $isEn ? "Free delivery in Bordeaux!" : "Livraison offerte à Bordeaux !" ?>'
                 : '📍 <?= $isEn ? "Delivery: 5€ + 0.59€/km (calculated on confirm)" : "Livraison : 5€ + 0,59€/km (calculé à la validation)" ?>';
         }
 
         if (summaryAmt) {
-            summaryAmt.innerHTML = isBordeaux
-                ? '<span class="commande-summary__free">Offerte 🎉</span>'
-                : '~<?= $isEn ? "From 5€" : "À partir de 5€" ?>';
+            if (isBordeaux) {
+                summaryAmt.textContent = 'Offerte 🎉';
+                summaryAmt.classList.add('commande-summary__free');
+            } else {
+                summaryAmt.textContent = '~<?= $isEn ? "From 5€" : "À partir de 5€" ?>';
+                summaryAmt.classList.remove('commande-summary__free');
+            }
         }
     }
 
