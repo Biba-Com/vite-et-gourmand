@@ -3,6 +3,15 @@ FROM php:8.2-apache
 # Installer l'extension PDO MySQL
 RUN docker-php-ext-install pdo pdo_mysql
 
+# Install the MongoDB extension (NoSQL statistics).
+# libssl-dev is required so the driver is built with TLS support,
+# which MongoDB Atlas requires.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libssl-dev \
+    && pecl install mongodb \
+    && docker-php-ext-enable mongodb \
+    && rm -rf /var/lib/apt/lists/*
+
 # Activer mod_rewrite pour les URLs propres
 RUN a2enmod rewrite
 
