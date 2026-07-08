@@ -33,7 +33,9 @@
 }
 
 @media (max-width: 640px) {
-    .admin-create-form__row { grid-template-columns: 1fr; }
+    .admin-create-form__row {
+        grid-template-columns: 1fr;
+    }
 }
 
 .admin-create-form__field {
@@ -133,4 +135,44 @@
     font-family: var(--font-heading);
     font-size: var(--fs-2xl);
     color: var(--color-gold);
+}
+
+/* ── En-tête section stats : titre + bouton rafraîchir ──── */
+.admin-stats__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
+.admin-stats__refresh {
+    margin: 0;
+}
+
+/* Bouton "Rafraîchir les statistiques" */
+.btn-refresh-stats {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 0.6rem var(--space-lg);
+    border: 1.5px solid var(--color-forest);
+    border-radius: var(--radius-md);
+    background: var(--color-white);
+    color: var(--color-forest);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.btn-refresh-stats:hover {
+    background: var(--color-forest);
+    color: var(--color-white);
+}
+
+.btn-refresh-stats:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
 }

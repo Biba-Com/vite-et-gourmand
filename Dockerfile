@@ -4,6 +4,16 @@ RUN a2dismod mpm_event || true && a2enmod mpm_prefork
 
 RUN docker-php-ext-install pdo pdo_mysql
 
+# Install the MongoDB extension (NoSQL statistics).
+# libssl-dev is required so the driver is built with TLS support,
+# which MongoDB Atlas requires.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libssl-dev \
+    && pecl install mongodb \
+    && docker-php-ext-enable mongodb \
+    && rm -rf /var/lib/apt/lists/*
+
+# Activer mod_rewrite pour les URLs propres
 RUN a2enmod rewrite
 
 COPY src/ /var/www/html/src/
@@ -15,6 +25,8 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
 RUN chown -R www-data:www-data /var/www/html
+
+RUN a2dismod mpm_event || true && a2enmod mpm_prefork
 
 EXPOSE 80
 
