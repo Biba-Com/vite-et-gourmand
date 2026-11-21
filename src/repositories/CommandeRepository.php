@@ -199,4 +199,89 @@ class CommandeRepository
 
         return $distance;
     }
+    /**
+     * Update an existing order and its computed amounts.
+     *
+     * The order lines are updated too, since the quantity (guest
+     * count) may have changed and the sous_total per line depends
+     * on it. Everything happens inside one transaction.
+     *
+     * @param int    $idCommande     Order id to update.
+     * @param int    $idUtilisateur  Owner id (safety check).
+     * @param array  $fields         ['dateEvenement', 'adresseLivraison',
+     *                                'codePostalLivraison', 'villeLivraison',
+     *                                'distanceKm', 'nbPersonnes', 'sousTotal',
+     *                                'montantRemise', 'fraisLivraison', 'total']
+     * @throws PDOException If the update fails.
+     */
+    public function update(int $idCommande, int $idUtilisateur, array $fields): void
+    {
+        try {
+            $this->pdo->beginTransaction();
+
+            // 1) Update the order itself
+            $stmt = $this->pdo->prepare("
+                UPDATE commande SET
+                    date_evenement         = :date_evenement,
+                    adresse_livraison      = :adresse,
+                    code_postal_livraison  = :code_postal,
+                    ville_livraison        = :ville,
+                    distance_km            = :distance_km,
+                    nb_personnes           = :nb_personnes,
+                    sous_total             = :sous_total,
+                    montant_remise         = :montant_remise,
+                    frais_livraison        = :frais_livraison,
+                    total                  = :total,
+                    updated_at             = NOW()
+                WHERE id_commande = :id_commande
+                AND id_utilisateur = :id_utilisateur
+            ");
+
+            $stmt->execute([
+                ':date_evenement' => $fields['dateEvenement'],
+                ':adresse'        => $fields['adresseLivraison'],
+                ':code_postal'    => $fields['codePostalLivraison'],
+                ':ville'          => $fields['villeLivraison'],
+                ':distance_km'    => $fields['distanceKm'],
+                ':nb_personnes'   => $fields['nbPersonnes'],
+                ':sous_total'     => $fields['sousTotal'],
+                ':montant_remise' => $fields['montantRemise'],
+                ':frais_livraison' => $fields['fraisLivraison'],
+                ':total'          => $fields['total'],
+                ':id_commande'    => $idCommande,
+                ':id_utilisateur' => $idUtilisateur,
+            ]);
+
+            // 2) Update the guest count on every line, and recompute
+            //    each line's sous_total from its own unit price
+            $this->pdo->prepare("
+                UPDATE ligne_commande
+                SET quantite   = :nb_personnes,
+                sous_total = prix_unitaire * :nb_personnes2
+                WHERE id_commande = :id_commande
+            ")->execute([
+                ':nb_personnes'  => $fields['nbPersonnes'],
+                ':nb_personnes2' => $fields['nbPersonnes'],
+                ':id_commande'   => $idCommande,
+            ]);
+
+            // 3) History entry
+            $this->pdo->prepare("
+                INSERT INTO historique_statut
+                (id_commande, statut_precedent, nouveau_statut,
+                id_utilisateur, motif, created_at)
+                VALUES
+                (:id_commande, 'pending', 'pending',
+                :id_utilisateur, 'Commande modifiée par le client', NOW())
+            ")->execute([
+                ':id_commande'    => $idCommande,
+                ':id_utilisateur' => $idUtilisateur,
+            ]);
+
+            $this->pdo->commit();
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
+    }
 }
