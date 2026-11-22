@@ -61,7 +61,13 @@ $errors = [];
 // ════════════════════════════════════════════════════════════
 // POST → delegate everything to the controller
 // ════════════════════════════════════════════════════════════
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? null)) {
+
+    // Forged or expired form: nothing is saved.
+    $errors = ['Session expirée. Veuillez réessayer.'];
+
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $controller = new CommandeController($pdo);
     $result = $controller->submitOrder($_POST, (int) $user['id_utilisateur'], $panier);
@@ -69,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result['success']) {
         // Order saved: empty the cart and go to the orders page.
         unset($_SESSION['panier']);
+        AuthController::regenerateCsrfToken();
         $_SESSION['flash_success'] =
             'Votre commande #' . $result['orderId'] . ' a été enregistrée ! Nous vous contactons sous 24h.';
         header('Location: /mes-commandes/');

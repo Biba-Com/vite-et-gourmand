@@ -106,36 +106,119 @@ class CommandeService
     }
 
     /**
-     * Compute every amount of an order from its parameters.
+     * Compute every amount of an existing order from its lines.
      *
-     * Used by both order creation and order modification, which
-     * guarantees that the same business rules always apply.
+     * Used when a customer modifies a pending order: the guest count
+     * applies to every line, and each line keeps its own unit price and
+     * menu minimum, so the discount rule is checked line by line exactly
+     * as when the cart was built.
      *
-     * @param float  $prixUnitaire   Price per guest for the menu.
-     * @param int    $nbPersonnes    Requested guest count.
-     * @param int    $nbPersonnesMin Minimum required by the menu.
-     * @param string $ville          Delivery city.
-     * @param float  $distanceKm     Distance from Bordeaux in km.
+     * @param array[] $lines       Order lines (prix_unitaire, nb_personnes_min).
+     * @param int     $nbPersonnes Requested guest count.
+     * @param string  $ville       Delivery city.
+     * @param float   $distanceKm  Distance from Bordeaux in km.
      * @return array ['sousTotal', 'montantRemise', 'fraisLivraison', 'total']
      */
     public function computeOrderAmounts(
-        float $prixUnitaire,
+        array $lines,
         int $nbPersonnes,
-        int $nbPersonnesMin,
         string $ville,
         float $distanceKm
     ): array {
-        $sousTotal      = round($prixUnitaire * $nbPersonnes, 2);
-        $montantRemise  = $this->computeDiscount($sousTotal, $nbPersonnes, $nbPersonnesMin);
+        $sousTotal     = 0.0;
+        $montantRemise = 0.0;
+
+        foreach ($lines as $line) {
+            $lineSubtotal   = round((float) $line['prix_unitaire'] * $nbPersonnes, 2);
+            $sousTotal     += $lineSubtotal;
+            $montantRemise += $this->computeDiscount($lineSubtotal, $nbPersonnes, (int) $line['nb_personnes_min']);
+        }
+
         $fraisLivraison = $this->computeDeliveryFee($ville, $distanceKm);
         $total          = round($sousTotal - $montantRemise + $fraisLivraison, 2);
 
         return [
-            'sousTotal'      => $sousTotal,
-            'montantRemise'  => $montantRemise,
+            'sousTotal'      => round($sousTotal, 2),
+            'montantRemise'  => round($montantRemise, 2),
             'fraisLivraison' => $fraisLivraison,
             'total'          => $total,
         ];
+    }
+
+    /**
+     * Business rule: only an order that the team has not accepted yet
+     * (status "pending") can be modified or cancelled by the customer.
+     *
+     * @param array $order Order row.
+     * @return bool True when the customer may still change it.
+     */
+    public function canBeModified(array $order): bool
+    {
+        return ($order['statut'] ?? '') === 'pending';
+    }
+
+    /**
+     * Check the data submitted to modify an order.
+     * Same rules as a new order, plus the guest count, which must reach
+     * the highest minimum among the ordered menus.
+     *
+     * @param array   $data  Cleaned fields (adresse, code_postal, ville,
+     *                       date_evenement, nb_personnes).
+     * @param array[] $lines Order lines (nb_personnes_min).
+     * @return string[] Error messages (empty array = all good).
+     */
+    public function validateUpdateInput(array $data, array $lines): array
+    {
+        $errors = $this->validateOrderInput($data);
+
+        $minimum = 1;
+        foreach ($lines as $line) {
+            $minimum = max($minimum, (int) $line['nb_personnes_min']);
+        }
+
+        if ((int) ($data['nb_personnes'] ?? 0) < $minimum) {
+            $errors[] = "Le nombre de personnes doit être d'au moins {$minimum} pour ce menu.";
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Modify a pending order: recompute every amount with the same rules
+     * as order creation, then ask the repository to save it.
+     *
+     * @param CommandeRepository $repository    Data-access component.
+     * @param int                $idCommande    Order id.
+     * @param int                $idUtilisateur Owner id.
+     * @param array              $data          Validated fields.
+     * @param array[]            $lines         Order lines.
+     * @return bool False when the order could not be updated (no longer pending).
+     * @throws PDOException If saving fails.
+     */
+    public function updateOrder(
+        CommandeRepository $repository,
+        int $idCommande,
+        int $idUtilisateur,
+        array $data,
+        array $lines
+    ): bool {
+        $nbPersonnes = (int) $data['nb_personnes'];
+        $ville       = $data['ville'];
+        $distanceKm  = $this->resolveDistance($repository, $ville);
+        $amounts     = $this->computeOrderAmounts($lines, $nbPersonnes, $ville, $distanceKm);
+
+        return $repository->update($idCommande, $idUtilisateur, [
+            'dateEvenement'       => $data['date_evenement'] . ' ' . ($data['heure_evenement'] ?: '12:00') . ':00',
+            'adresseLivraison'    => $data['adresse'],
+            'codePostalLivraison' => $data['code_postal'],
+            'villeLivraison'      => $ville,
+            'distanceKm'          => $distanceKm,
+            'nbPersonnes'         => $nbPersonnes,
+            'sousTotal'           => $amounts['sousTotal'],
+            'montantRemise'       => $amounts['montantRemise'],
+            'fraisLivraison'      => $amounts['fraisLivraison'],
+            'total'               => $amounts['total'],
+        ]);
     }
 
     /**

@@ -65,6 +65,7 @@ $sousNet = $sousTotal - $totalRemises;
 
             <!-- ── Formulaire ───────────────────────── -->
             <form class="commande-form" method="POST" action="/commande/" novalidate>
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(AuthController::generateCsrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 
                 <!-- Infos client (auto-remplies) -->
                 <section class="commande-section">

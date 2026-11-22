@@ -199,6 +199,55 @@ class CommandeRepository
 
         return $distance;
     }
+
+    /**
+     * Load one order of a given customer, with the titles of its menus.
+     *
+     * The customer id is part of the WHERE clause: a customer can never
+     * read (or later modify) an order that belongs to someone else.
+     *
+     * @param int $idCommande    Order id.
+     * @param int $idUtilisateur Owner id.
+     * @return array|null The order row, or null if not found for this user.
+     */
+    public function findByIdForUser(int $idCommande, int $idUtilisateur): ?array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT c.*,
+                   GROUP_CONCAT(m.titre SEPARATOR ', ') AS menus_titres
+            FROM commande c
+            LEFT JOIN ligne_commande lc ON c.id_commande = lc.id_commande
+            LEFT JOIN menu m             ON lc.id_menu    = m.id_menu
+            WHERE c.id_commande = :id AND c.id_utilisateur = :uid
+            GROUP BY c.id_commande
+            LIMIT 1
+        ");
+        $stmt->execute([':id' => $idCommande, ':uid' => $idUtilisateur]);
+        $row = $stmt->fetch();
+
+        return $row ?: null;
+    }
+
+    /**
+     * Return the lines of an order with the pricing data the service
+     * needs to recompute the amounts (unit price, menu minimum).
+     *
+     * @param int $idCommande Order id.
+     * @return array[] One row per line: id_menu, prix_unitaire, nb_personnes_min.
+     */
+    public function findLines(int $idCommande): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT lc.id_menu, lc.prix_unitaire, m.nb_personnes_min
+            FROM ligne_commande lc
+            JOIN menu m ON m.id_menu = lc.id_menu
+            WHERE lc.id_commande = :id
+        ");
+        $stmt->execute([':id' => $idCommande]);
+
+        return $stmt->fetchAll();
+    }
+
     /**
      * Update an existing order and its computed amounts.
      *
@@ -212,9 +261,10 @@ class CommandeRepository
      *                                'codePostalLivraison', 'villeLivraison',
      *                                'distanceKm', 'nbPersonnes', 'sousTotal',
      *                                'montantRemise', 'fraisLivraison', 'total']
+     * @return bool False when no pending order matched (nothing written).
      * @throws PDOException If the update fails.
      */
-    public function update(int $idCommande, int $idUtilisateur, array $fields): void
+    public function update(int $idCommande, int $idUtilisateur, array $fields): bool
     {
         try {
             $this->pdo->beginTransaction();
@@ -235,6 +285,7 @@ class CommandeRepository
                     updated_at             = NOW()
                 WHERE id_commande = :id_commande
                 AND id_utilisateur = :id_utilisateur
+                AND statut = 'pending'
             ");
 
             $stmt->execute([
@@ -251,6 +302,13 @@ class CommandeRepository
                 ':id_commande'    => $idCommande,
                 ':id_utilisateur' => $idUtilisateur,
             ]);
+
+            // Nothing matched: the order is not pending or not owned by
+            // this customer. Undo the transaction and report it.
+            if ($stmt->rowCount() === 0) {
+                $this->pdo->rollBack();
+                return false;
+            }
 
             // 2) Update the guest count on every line, and recompute
             //    each line's sous_total from its own unit price
@@ -279,6 +337,8 @@ class CommandeRepository
             ]);
 
             $this->pdo->commit();
+
+            return true;
         } catch (PDOException $e) {
             $this->pdo->rollBack();
             throw $e;

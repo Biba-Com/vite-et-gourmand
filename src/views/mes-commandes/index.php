@@ -185,6 +185,7 @@ $statutLabels  = $statutLabels  ?? [];
                             <!-- ❌ Annuler (si pending uniquement) -->
                             <?php if ($peutAnnuler): ?>
                                 <form method="POST" action="/mes-commandes/annuler.php" style="display:inline;">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(AuthController::generateCsrfToken(), ENT_QUOTES, 'UTF-8') ?>">
                                     <input type="hidden" name="id_commande"
                                            value="<?= $commande['id_commande'] ?>">
                                     <button type="submit"

@@ -51,6 +51,7 @@ $heureEvt = !empty($commande['date_evenement'])
 
                 <input type="hidden" name="id_commande"
                        value="<?= $commande['id_commande'] ?>">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(AuthController::generateCsrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 
                 <!-- Menu (non modifiable — énoncé page 7) -->
                 <section class="commande-section">
@@ -92,7 +93,7 @@ $heureEvt = !empty($commande['date_evenement'])
                                name="nb_personnes"
                                class="commande-form__input"
                                value="<?= (int) $commande['nb_personnes'] ?>"
-                               min="1" required aria-required="true">
+                               min="<?= (int) ($commande['nb_personnes_min'] ?? 1) ?>" required aria-required="true">
                     </div>
 
                     <div class="commande-form__row">

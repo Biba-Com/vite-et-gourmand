@@ -23,6 +23,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Reject forged requests (CSRF)
+if (!AuthController::verifyCsrfToken($_POST['csrf_token'] ?? null)) {
+    $_SESSION['flash_error'] = 'Session expirée. Veuillez réessayer.';
+    header('Location: /mes-commandes/');
+    exit;
+}
+
 $idCommande = (int) ($_POST['id_commande'] ?? 0);
 $userId     = (int) $_SESSION['user_id'];
 

@@ -2,15 +2,19 @@
 
 /**
  * ============================================================
- * Vite & Gourmand — Modification commande
+ * Vite & Gourmand — Modify order entry point
  * ============================================================
- * Chemin : src/public/mes-commandes/modifier.php
+ * Path: src/public/mes-commandes/modifier.php
  *
- * GET  → Affiche le formulaire pré-rempli
- * POST → Valide et met à jour la commande
+ * GET  → shows the pre-filled form
+ * POST → checks the CSRF token, delegates to CommandeController,
+ *        then redirects
  *
- * Règle énoncé page 7 : tout modifiable sauf le menu
- * Possible uniquement si statut = pending
+ * Rule from the specifications: everything can be changed except
+ * the menu, and only while the order is still "pending".
+ *
+ * Thin entry point: amounts are recomputed by CommandeService and
+ * saved by CommandeRepository, exactly like a new order.
  * ============================================================
  */
 
@@ -19,6 +23,7 @@ session_start();
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../config/lang.php';
 require_once __DIR__ . '/../../controllers/AuthController.php';
+require_once __DIR__ . '/../../controllers/CommandeController.php';
 
 $currentLang = currentLang();
 $isEn        = $currentLang === 'en';
@@ -37,132 +42,42 @@ if ($idCommande <= 0) {
     exit;
 }
 
-$pdo = getDbConnection();
+$controller = new CommandeController(getDbConnection());
 
-// ── Récupérer la commande ────────────────────────────────
-$stmt = $pdo->prepare("
-    SELECT c.*,
-           GROUP_CONCAT(m.titre SEPARATOR ', ') AS menus_titres,
-           SUM(lc.prix_unitaire * lc.quantite)  AS sous_total_brut
-    FROM commande c
-    LEFT JOIN ligne_commande lc ON c.id_commande = lc.id_commande
-    LEFT JOIN menu m             ON lc.id_menu    = m.id_menu
-    WHERE c.id_commande = :id AND c.id_utilisateur = :uid
-    GROUP BY c.id_commande
-    LIMIT 1
-");
-$stmt->execute([':id' => $idCommande, ':uid' => $userId]);
-$commande = $stmt->fetch();
+// ── The order must exist, belong to the user and be pending ─
+$commande = $controller->getEditableOrder($idCommande, $userId);
 
-if (!$commande) {
-    header('Location: /mes-commandes/');
-    exit;
-}
-
-// ── Vérifier que modification est possible ───────────────
-if ($commande['statut'] !== 'pending') {
+if ($commande === null) {
     $_SESSION['flash_error'] = 'Cette commande ne peut plus être modifiée.';
     header('Location: /mes-commandes/');
     exit;
 }
 
-$errors = [];
+$errors    = [];
+$csrfToken = AuthController::generateCsrfToken();
 
-// ════════════════════════════════════════════════════════
-// POST — Mise à jour
-// ════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
+// POST → CSRF check, then delegate to the controller
+// ════════════════════════════════════════════════════════════
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $nbPersonnes    = (int)   ($_POST['nb_personnes']    ?? 0);
-    $dateEvenement  = trim(strip_tags($_POST['date_evenement']   ?? ''));
-    $heureEvenement = trim(strip_tags($_POST['heure_evenement']  ?? '12:00'));
-    $adresse        = trim(strip_tags($_POST['adresse_livraison'] ?? ''));
-    $codePostal     = trim(strip_tags($_POST['code_postal']       ?? ''));
-    $ville          = trim(strip_tags($_POST['ville']             ?? ''));
-
-    // Validations
-    if ($nbPersonnes <= 0) $errors[] = 'Le nombre de personnes est obligatoire.';
-
-    if (empty($dateEvenement)) {
-        $errors[] = 'La date est obligatoire.';
+    if (!AuthController::verifyCsrfToken($_POST['csrf_token'] ?? null)) {
+        $errors[] = 'Session expirée. Veuillez réessayer.';
     } else {
-        $dateObj = DateTime::createFromFormat('Y-m-d', $dateEvenement);
-        $minDate = new DateTime('+2 days');
-        if (!$dateObj || $dateObj < $minDate) {
-            $errors[] = 'La date doit être au minimum 48h à l\'avance.';
-        }
-    }
+        $result = $controller->updateOrder($idCommande, $_POST, $userId);
 
-    if (empty($adresse))    $errors[] = 'L\'adresse est obligatoire.';
-    if (empty($codePostal)) $errors[] = 'Le code postal est obligatoire.';
-    if (empty($ville))      $errors[] = 'La ville est obligatoire.';
-
-    if (empty($errors)) {
-
-        // Recalculer frais livraison
-        $fraisLivraison = 0.0;
-        if (strtolower(trim($ville)) !== 'bordeaux') {
-            $fraisLivraison = 5.00;
-        }
-
-        // Recalculer total
-        $sousTotal    = (float) $commande['sous_total_brut'];
-        $remise       = $nbPersonnes >= 5 ? round($sousTotal * 0.10, 2) : 0;
-        $total        = round($sousTotal - $remise + $fraisLivraison, 2);
-        $dateHeure    = $dateEvenement . ' ' . $heureEvenement . ':00';
-
-        try {
-            $pdo->beginTransaction();
-
-            // Mettre à jour la commande
-            $pdo->prepare("
-                UPDATE commande SET
-                    date_evenement      = :date,
-                    adresse_livraison   = :adresse,
-                    code_postal_livraison = :cp,
-                    ville_livraison     = :ville,
-                    nb_personnes        = :nb,
-                    frais_livraison     = :frais,
-                    montant_remise      = :remise,
-                    total               = :total,
-                    updated_at          = NOW()
-                WHERE id_commande = :id AND id_utilisateur = :uid
-            ")->execute([
-                ':date'   => $dateHeure,
-                ':adresse'=> $adresse,
-                ':cp'     => $codePostal,
-                ':ville'  => $ville,
-                ':nb'     => $nbPersonnes,
-                ':frais'  => $fraisLivraison,
-                ':remise' => $remise,
-                ':total'  => $total,
-                ':id'     => $idCommande,
-                ':uid'    => $userId,
-            ]);
-
-            // Historique
-            $pdo->prepare("
-                INSERT INTO historique_statut
-                    (id_commande, statut_precedent, nouveau_statut, id_utilisateur, motif, created_at)
-                VALUES
-                    (:id, 'pending', 'pending', :uid, 'Commande modifiée par le client', NOW())
-            ")->execute([':id' => $idCommande, ':uid' => $userId]);
-
-            $pdo->commit();
-
-            $_SESSION['flash_success'] = 'Commande #' . str_pad($idCommande, 4, '0', STR_PAD_LEFT) . ' modifiée avec succès.';
+        if ($result['success']) {
+            AuthController::regenerateCsrfToken();
+            $_SESSION['flash_success'] = 'Commande #' . str_pad((string) $idCommande, 4, '0', STR_PAD_LEFT) . ' modifiée avec succès.';
             header('Location: /mes-commandes/');
             exit;
-
-        } catch (PDOException $e) {
-            $pdo->rollBack();
-            error_log('Modification commande: ' . $e->getMessage());
-            $errors[] = 'Erreur technique. Veuillez réessayer.';
         }
+
+        $errors = $result['errors'];
     }
 }
 
-// ── Affichage ────────────────────────────────────────────
+// ── Display ──────────────────────────────────────────────
 ob_start();
 require_once __DIR__ . '/../../views/mes-commandes/modifier.php';
 $content = ob_get_clean();
