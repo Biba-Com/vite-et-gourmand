@@ -43,6 +43,7 @@ $errors   = $errors   ?? [];
             <!-- Formulaire -->
             <form class="avis-form" method="POST"
                   action="/mes-commandes/avis.php" novalidate>
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(AuthController::generateCsrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 
                 <input type="hidden" name="id_commande"
                        value="<?= $commande['id_commande'] ?>">

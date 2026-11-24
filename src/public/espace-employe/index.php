@@ -153,6 +153,12 @@ $prochainStatut = [
 // POST — Actions
 // ════════════════════════════════════════════════════════
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Reject forged requests (CSRF) before any action
+    if (!AuthController::verifyCsrfToken($_POST['csrf_token'] ?? null)) {
+        $_SESSION['flash_error'] = 'Session expirée. Veuillez réessayer.';
+        header('Location: /espace-employe/');
+        exit;
+    }
     $action = $_POST['action'] ?? '';
 
     // ── Changer statut commande ───────────────────────

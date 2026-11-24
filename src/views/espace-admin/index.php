@@ -88,6 +88,7 @@ $flashError    = $flashError    ?? null;
                     </h2>
                     <form method="POST" action="/espace-admin/?tab=employes"
                         class="admin-create-form" novalidate>
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(AuthController::generateCsrfToken(), ENT_QUOTES, 'UTF-8') ?>">
                         <input type="hidden" name="action" value="create_employee">
 
                         <div class="admin-create-form__row">
@@ -174,6 +175,7 @@ $flashError    = $flashError    ?? null;
                                         <?php if ($emp['role'] !== 'admin'): ?>
                                             <form method="POST" action="/espace-admin/?tab=employes"
                                                 style="display:inline;">
+                                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(AuthController::generateCsrfToken(), ENT_QUOTES, 'UTF-8') ?>">
                                                 <input type="hidden" name="action" value="toggle_employe">
                                                 <input type="hidden" name="id_utilisateur"
                                                     value="<?= $emp['id_utilisateur'] ?>">
@@ -318,11 +320,13 @@ $flashError    = $flashError    ?? null;
                             <p class="employe__avis-commentaire">"<?= htmlspecialchars($avis['commentaire'], ENT_QUOTES, 'UTF-8') ?>"</p>
                             <div class="employe__avis-actions">
                                 <form method="POST" action="/espace-admin/?tab=avis" style="display:inline;">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(AuthController::generateCsrfToken(), ENT_QUOTES, 'UTF-8') ?>">
                                     <input type="hidden" name="action" value="approve_avis">
                                     <input type="hidden" name="id_avis" value="<?= $avis['id_avis'] ?>">
                                     <button type="submit" class="btn btn--primary btn--sm">✅ Valider</button>
                                 </form>
                                 <form method="POST" action="/espace-admin/?tab=avis" style="display:inline;">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(AuthController::generateCsrfToken(), ENT_QUOTES, 'UTF-8') ?>">
                                     <input type="hidden" name="action" value="reject_avis">
                                     <input type="hidden" name="id_avis" value="<?= $avis['id_avis'] ?>">
                                     <button type="submit" class="btn btn--ghost btn--sm employe__btn-cancel">❌ Refuser</button>
@@ -345,6 +349,7 @@ $flashError    = $flashError    ?? null;
 
                     <!-- Bouton de rafraîchissement des stats (MySQL → MongoDB) -->
                     <form method="POST" action="/espace-admin/?tab=stats" class="admin-stats__refresh">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(AuthController::generateCsrfToken(), ENT_QUOTES, 'UTF-8') ?>">
                         <input type="hidden" name="action" value="refresh_stats">
                         <button type="submit" class="btn-refresh-stats">
                             ↻ Rafraîchir les statistiques
@@ -464,6 +469,7 @@ $flashError    = $flashError    ?? null;
     <div class="employe-modal__panel">
         <h2 class="employe-modal__title">Mettre à jour le statut</h2>
         <form method="POST" id="statut-form" action="/espace-admin/?tab=commandes">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(AuthController::generateCsrfToken(), ENT_QUOTES, 'UTF-8') ?>">
             <input type="hidden" name="action" value="update_statut">
             <input type="hidden" name="id_commande" id="modal-id-commande">
             <input type="hidden" name="nouveau_statut" id="modal-nouveau-statut">

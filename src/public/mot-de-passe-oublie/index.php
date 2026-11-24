@@ -49,18 +49,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // ── Fix timezone ─────────────────────────────────
             // On laisse MySQL calculer l'expiry avec son propre NOW()
             // pour éviter tout décalage UTC vs heure locale
+            // Only one valid link at a time: older unused tokens are closed
             $pdo->prepare("
-                UPDATE utilisateur
-                SET reset_token        = :token,
-                    reset_token_expiry = DATE_ADD(NOW(), INTERVAL 1 HOUR)
-                WHERE id_utilisateur   = :id
+                UPDATE token_mot_de_passe SET used_at = NOW()
+                WHERE id_utilisateur = :id AND used_at IS NULL
+            ")->execute([':id' => $user['id_utilisateur']]);
+
+            // Only the SHA-256 hash is stored: a database leak does not expose usable links
+            $pdo->prepare("
+                INSERT INTO token_mot_de_passe (id_utilisateur, token_hash, expires_at)
+                VALUES (:id, :hash, DATE_ADD(NOW(), INTERVAL 1 HOUR))
             ")->execute([
-                ':token' => $token,
-                ':id'    => $user['id_utilisateur'],
+                ':id'   => $user['id_utilisateur'],
+                ':hash' => hash('sha256', $token),
             ]);
 
             // Construire le lien
-            $resetLink = 'http://localhost/reinitialiser-mot-de-passe/?token=' . $token;
+            $resetLink = '/reinitialiser-mot-de-passe/?token=' . $token;
 
             // Log email simulé
             try {
@@ -79,7 +84,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // Mode développement : afficher le lien
-            $_SESSION['reset_link_dev'] = $resetLink;
+            // No e-mail server: the link is written to the server log only,
+            // never shown on screen (otherwise anyone could reset any account).
+            error_log('Password reset link for user #' . $user['id_utilisateur'] . ': ' . $resetLink);
         }
 
         $success = true;

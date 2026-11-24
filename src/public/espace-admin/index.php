@@ -70,7 +70,7 @@ $statsMenus = [];
 try {
     $statsRepo  = new StatsRepository(getMongoManager(), getMongoDbName());
     $statsMenus = $statsRepo->getCommandesParMenu();
-} catch (Exception $e) {
+} catch (Throwable $e) {
     // Si MongoDB est injoignable, on n'empêche pas la page de s'afficher :
     // le graphique sera simplement vide, et l'erreur est journalisée.
     error_log('Stats MongoDB indisponibles : ' . $e->getMessage());
@@ -154,6 +154,12 @@ $prochainStatut = [
 // POST — Actions
 // ════════════════════════════════════════════════════════
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Reject forged requests (CSRF) before any action
+    if (!AuthController::verifyCsrfToken($_POST['csrf_token'] ?? null)) {
+        $_SESSION['flash_error'] = 'Session expirée. Veuillez réessayer.';
+        header('Location: /espace-admin/');
+        exit;
+    }
     $action = $_POST['action'] ?? '';
 
     // ── Créer un employé ─────────────────────────────
@@ -169,8 +175,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         if (empty($prenom)) $errors[] = 'Prénom obligatoire.';
         if (empty($nom))    $errors[] = 'Nom obligatoire.';
-        if (mb_strlen($password) < 8) {
-            $errors[] = 'Mot de passe : 8 caractères minimum.';
+        if (mb_strlen($password) < 10
+            || !preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password)
+            || !preg_match('/\d/', $password) || !preg_match('/[^A-Za-z0-9]/', $password)) {
+            $errors[] = 'Mot de passe : 10 caractères minimum, avec une majuscule, une minuscule, un chiffre et un caractère spécial.';
         }
 
         if (empty($errors)) {
@@ -210,7 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ── Activer / Désactiver un employé ──────────────
     if ($action === 'toggle_employe') {
         $idUser    = (int) ($_POST['id_utilisateur'] ?? 0);
-        $newStatus = (int) ($_POST['new_status']     ?? 0);
+        $newStatus = ((int) ($_POST['new_status'] ?? 0)) === 1 ? 1 : 0;
 
         // Protéger le compte admin
         if ($idUser === (int) $_SESSION['user_id']) {
@@ -295,8 +303,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 SELECT
                     m.id_menu,
                     m.titre,
-                    COUNT(lc.id_ligne)              AS nb_commandes,
-                    COALESCE(SUM(lc.sous_total), 0) AS ca_total
+                    COUNT(c.id_commande)            AS nb_commandes,
+                    COALESCE(SUM(CASE WHEN c.id_commande IS NOT NULL THEN lc.sous_total END), 0) AS ca_total
                 FROM menu m
                 LEFT JOIN ligne_commande lc ON m.id_menu = lc.id_menu
                 LEFT JOIN commande c        ON lc.id_commande = c.id_commande
@@ -311,7 +319,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $repoSync->saveMenuStats($lignesSync);
 
             $_SESSION['flash_success'] = 'Statistiques rafraîchies depuis les commandes actuelles.';
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             error_log('Refresh stats MongoDB : ' . $e->getMessage());
             $_SESSION['flash_error'] = 'Impossible de rafraîchir les statistiques pour le moment.';
         }

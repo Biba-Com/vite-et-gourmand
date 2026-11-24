@@ -28,8 +28,8 @@ try {
         SELECT
             m.id_menu,
             m.titre,
-            COUNT(lc.id_ligne)              AS nb_commandes,
-            COALESCE(SUM(lc.sous_total), 0) AS ca_total
+            COUNT(c.id_commande)            AS nb_commandes,
+            COALESCE(SUM(CASE WHEN c.id_commande IS NOT NULL THEN lc.sous_total END), 0) AS ca_total
         FROM menu m
         LEFT JOIN ligne_commande lc ON m.id_menu = lc.id_menu
         LEFT JOIN commande c        ON lc.id_commande = c.id_commande

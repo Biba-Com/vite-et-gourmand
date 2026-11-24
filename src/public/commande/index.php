@@ -47,7 +47,7 @@ $userModel = new UserModel($pdo);
 $user      = $userModel->findById((int) $_SESSION['user_id']);
 
 if (!$user) {
-    AuthController::logout();
+    (new AuthController($userModel, $pdo))->logout();
     header('Location: /connexion/');
     exit;
 }

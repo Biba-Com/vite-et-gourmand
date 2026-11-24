@@ -233,12 +233,12 @@ class CommandeRepository
      * needs to recompute the amounts (unit price, menu minimum).
      *
      * @param int $idCommande Order id.
-     * @return array[] One row per line: id_menu, prix_unitaire, nb_personnes_min.
+     * @return array[] One row per line: id_menu, prix_unitaire, nb_personnes_min, nb_personnes_max.
      */
     public function findLines(int $idCommande): array
     {
         $stmt = $this->pdo->prepare("
-            SELECT lc.id_menu, lc.prix_unitaire, m.nb_personnes_min
+            SELECT lc.id_menu, lc.prix_unitaire, m.nb_personnes_min, m.nb_personnes_max
             FROM ligne_commande lc
             JOIN menu m ON m.id_menu = lc.id_menu
             WHERE lc.id_commande = :id

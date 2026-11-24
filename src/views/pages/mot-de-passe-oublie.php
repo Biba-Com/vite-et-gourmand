@@ -10,9 +10,6 @@ $errors  = $errors  ?? [];
 $success = $success ?? false;
 $old     = $old     ?? [];
 
-// Lien dev (affiché uniquement en local)
-$resetLinkDev = $_SESSION['reset_link_dev'] ?? null;
-if ($resetLinkDev) unset($_SESSION['reset_link_dev']);
 ?>
 
 <div class="auth-page">
@@ -113,25 +110,6 @@ if ($resetLinkDev) unset($_SESSION['reset_link_dev']);
                 </div>
 
                 <!-- Lien dev uniquement (en local) -->
-                <?php if ($resetLinkDev): ?>
-                    <div class="auth-alert auth-alert--info" role="status">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <circle cx="12" cy="12" r="10" />
-                            <line x1="12" y1="8" x2="12" y2="12" />
-                            <line x1="12" y1="16" x2="12.01" y2="16" />
-                        </svg>
-                        <div>
-                            <strong>Mode développement</strong> — Lien de réinitialisation :
-                            <br>
-                            <a href="<?= htmlspecialchars($resetLinkDev, ENT_QUOTES, 'UTF-8') ?>"
-                                class="auth-reset-link">
-                                <?= htmlspecialchars($resetLinkDev, ENT_QUOTES, 'UTF-8') ?>
-                            </a>
-                            <br>
-                            <small>(Ce lien n'apparaîtra pas en production)</small>
-                        </div>
-                    </div>
-                <?php endif; ?>
 
                 <div class="auth-card__footer">
                     <a href="/connexion/" class="btn btn--ghost">

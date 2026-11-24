@@ -16,6 +16,9 @@
  * ============================================================
  */
 
+// Load the .env file (local) without overriding real environment variables (production)
+require_once __DIR__ . '/env.php';
+
 /**
  * Retourne une instance PDO configurée pour MySQL
  * 
@@ -36,7 +39,7 @@ function getDbConnection(): PDO
     $host    = getenv('DB_HOST') ?: 'localhost';
     $dbname  = getenv('DB_NAME') ?: 'vite_et_gourmand';
     $user    = getenv('DB_USER') ?: 'root';
-    $pass    = getenv('DB_PASS') ?: '';
+    $pass    = getenv('DB_PASSWORD') ?: (getenv('DB_PASS') ?: '');
     $port    = getenv('DB_PORT') ?: 3306;
     $charset = 'utf8mb4';
 

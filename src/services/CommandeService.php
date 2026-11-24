@@ -159,8 +159,8 @@ class CommandeService
 
     /**
      * Check the data submitted to modify an order.
-     * Same rules as a new order, plus the guest count, which must reach
-     * the highest minimum among the ordered menus.
+     * Same rules as a new order, plus the guest count, which must stay
+     * between the highest minimum and the lowest maximum of the ordered menus.
      *
      * @param array   $data  Cleaned fields (adresse, code_postal, ville,
      *                       date_evenement, nb_personnes).
@@ -176,8 +176,18 @@ class CommandeService
             $minimum = max($minimum, (int) $line['nb_personnes_min']);
         }
 
-        if ((int) ($data['nb_personnes'] ?? 0) < $minimum) {
+        $maximum = PHP_INT_MAX;
+        foreach ($lines as $line) {
+            if (!empty($line['nb_personnes_max'])) {
+                $maximum = min($maximum, (int) $line['nb_personnes_max']);
+            }
+        }
+
+        $guests = (int) ($data['nb_personnes'] ?? 0);
+        if ($guests < $minimum) {
             $errors[] = "Le nombre de personnes doit être d'au moins {$minimum} pour ce menu.";
+        } elseif ($guests > $maximum) {
+            $errors[] = "Le nombre de personnes ne peut pas dépasser {$maximum} pour ce menu.";
         }
 
         return $errors;

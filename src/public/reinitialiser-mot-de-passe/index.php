@@ -35,14 +35,16 @@ if (empty($token) || !preg_match('/^[a-f0-9]{64}$/', $token)) {
     $pdo = getDbConnection();
 
     $stmt = $pdo->prepare("
-        SELECT id_utilisateur, prenom, email
-        FROM utilisateur
-        WHERE reset_token        = :token
-          AND reset_token_expiry > NOW()
-          AND is_active          = 1
+        SELECT t.id_token, u.id_utilisateur, u.prenom, u.email
+        FROM token_mot_de_passe t
+        JOIN utilisateur u ON u.id_utilisateur = t.id_utilisateur
+        WHERE t.token_hash = :hash
+          AND t.expires_at > NOW()
+          AND t.used_at IS NULL
+          AND u.is_active  = 1
         LIMIT 1
     ");
-    $stmt->execute([':token' => $token]);
+    $stmt->execute([':hash' => hash('sha256', $token)]);
     $user = $stmt->fetch();
 
     $tokenInvalid = !$user;
@@ -74,14 +76,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$tokenInvalid && $user) {
     if (empty($errors)) {
         $hash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
 
+        // New password and token consumption in one transaction (single use)
+        $pdo->beginTransaction();
         $pdo->prepare("
             UPDATE utilisateur
-            SET mot_de_passe        = :hash,
-                reset_token         = NULL,
-                reset_token_expiry  = NULL,
-                updated_at          = NOW()
-            WHERE id_utilisateur    = :id
+            SET mot_de_passe = :hash,
+                updated_at   = NOW()
+            WHERE id_utilisateur = :id
         ")->execute([':hash' => $hash, ':id' => $user['id_utilisateur']]);
+        $pdo->prepare("
+            UPDATE token_mot_de_passe SET used_at = NOW() WHERE id_token = :token
+        ")->execute([':token' => $user['id_token']]);
+        $pdo->commit();
 
         $success = true;
 

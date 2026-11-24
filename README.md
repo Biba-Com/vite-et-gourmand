@@ -5,13 +5,13 @@
 ![Status](https://img.shields.io/badge/status-online-success)
 ![PHP](https://img.shields.io/badge/PHP-8.3-777BB4?logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-8.4-4479A1?logo=mysql&logoColor=white)
-![Deployed](https://img.shields.io/badge/deployed-Railway-0B0D0E?logo=railway&logoColor=white)
+![Deployed](https://img.shields.io/badge/deployed-alwaysdata-0B0D0E)
 ![License](https://img.shields.io/badge/license-Educational-blue)
 
 Application de commande de menus traiteur événementiel pour l'entreprise Vite & Gourmand (Bordeaux).
 Engagement éco-responsable, anti-gaspillage, partenaires locaux.
 
-🌐 **Live application:** https://vite-et-gourmand-production-35bb.up.railway.app
+🌐 **Live application:** https://ecf-2026.alwaysdata.net
 
 ---
 
@@ -45,9 +45,9 @@ Engagement éco-responsable, anti-gaspillage, partenaires locaux.
 | Charts             | Chart.js (admin statistics)             |
 | Back-end           | PHP 8.3 with PDO                        |
 | Relational DB      | MySQL 8.4                               |
-| Email service      | PHPMailer + Mailpit (development)       |
+| Email service      | Not active in this version (see below)  |
 | Local environment  | Laragon                                 |
-| Deployment         | Railway (Docker + Apache)               |
+| Deployment         | alwaysdata (Apache + PHP 8.4, SSH + Git)|
 | Project management | Notion                                  |
 | Design             | Figma                                   |
 | UML diagrams       | PlantUML                                |
@@ -66,16 +66,21 @@ cd vite-et-gourmand
 mysql -u root < database/create.sql
 mysql -u root < database/fixtures.sql
 
-# Configure the database connection
-# Edit src/config/database.php with your local credentials
+# Configure the environment
+cp .env.example .env
+# then set DB_HOST, DB_NAME, DB_USER, DB_PASSWORD and MONGO_URI
 # (Laragon defaults: host=localhost, user=root, password empty)
+
+# Run the integration test of the order modification flow
+php tests/test_update_order.php
 ```
 
 Then open the application via your local Laragon URL (e.g. `http://vite-et-gourmand.test/` or `http://localhost/vite-et-gourmand/src/public/`).
 
-> **Note:** The application reads database credentials from environment
-> variables in production (Railway) and falls back to local defaults
-> (Laragon) automatically. No manual switching required.
+> **Note:** `src/config/env.php` loads the `.env` file without overriding
+> real environment variables, so the same code runs locally (Laragon) and in
+> production (alwaysdata). No e-mail is sent in this version: the password
+> reset link is written to the server log.
 
 ---
 
@@ -212,7 +217,7 @@ This application includes features beyond the standard catering scope to support
 
 ## 🔗 Project links
 
-- 🌐 Live application: https://vite-et-gourmand-production-35bb.up.railway.app
+- 🌐 Live application: https://ecf-2026.alwaysdata.net
 - 📋 Notion project board: https://www.notion.so/Certification-DWWM-3158e984c38080d68fcad936e82e1fb7
 - 🎨 Figma mockups: *(see docs/maquettes/)*
 
@@ -236,7 +241,9 @@ vite-et-gourmand/
 │   ├── views/               # MVC — HTML/PHP templates
 │   ├── utils/               # Helper functions
 │   └── public/              # Web entry point + assets
-├── Dockerfile               # Railway deployment (PHP 8.2 + Apache)
+├── tests/                   # Integration test (order modification)
+├── sync_stats.php           # CLI: MySQL → MongoDB statistics sync
+├── Dockerfile               # Docker image (first deployment on Railway, optional)
 ├── .dockerignore
 ├── .gitignore
 └── README.md

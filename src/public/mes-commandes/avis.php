@@ -74,7 +74,9 @@ $pageTitle = 'Laisser un avis — Vite & Gourmand';
 // ════════════════════════════════════════════════════════
 // POST — Enregistrer l'avis
 // ════════════════════════════════════════════════════════
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? null)) {
+    $errors[] = 'Session expirée. Veuillez réessayer.';
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $note        = (int) ($_POST['note'] ?? 0);
     $commentaire = trim(strip_tags($_POST['commentaire'] ?? ''));

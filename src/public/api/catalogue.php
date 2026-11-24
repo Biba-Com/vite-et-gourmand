@@ -104,7 +104,13 @@ if ($nbPersonnes > 0) {
 
 // Filtre allergènes à exclure
 if (!empty($allergenes)) {
-    $placeholders = implode(',', array_fill(0, count($allergenes), '?'));
+    // Named placeholders only: PDO refuses to mix named and positional ones
+    $names = [];
+    foreach (array_values($allergenes) as $i => $aid) {
+        $names[] = ':allergene' . $i;
+        $params[':allergene' . $i] = $aid;
+    }
+    $placeholders = implode(',', $names);
     $sql .= " AND m.id_menu NOT IN (
         SELECT DISTINCT cm.id_menu
         FROM composition_menu cm
@@ -139,12 +145,6 @@ try {
     }
 
     // Binder les allergènes (paramètres positionnels)
-    if (!empty($allergenes)) {
-        $offset = count($params) + 1;
-        foreach (array_values($allergenes) as $i => $aid) {
-            $stmt->bindValue($offset + $i, $aid, PDO::PARAM_INT);
-        }
-    }
 
     $stmt->execute();
     $menus = $stmt->fetchAll(PDO::FETCH_ASSOC);

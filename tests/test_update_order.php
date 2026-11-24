@@ -49,6 +49,10 @@ $r = $ctl->updateOrder($id, array_merge($post, ['nb_personnes' => 10]), 6);
 check('10 guests rejected (menu minimum 15)', $r['success'] === false && str_contains($r['errors'][0] ?? '', '15'));
 check('order unchanged after rejection', (int) $repo->findByIdForUser($id, 6)['nb_personnes'] === 18);
 
+// 3b) Above the menu maximum (Menu Festif: 80) → rejected
+$r = $ctl->updateOrder($id, array_merge($post, ['nb_personnes' => 90]), 6);
+check('90 guests rejected (menu maximum 80)', $r['success'] === false && str_contains($r['errors'][0] ?? '', '80'));
+
 // 4) Date less than 48 h ahead → rejected
 $r = $ctl->updateOrder($id, array_merge($post, ['date_evenement' => date('Y-m-d')]), 6);
 check('date within 48 h rejected', $r['success'] === false);

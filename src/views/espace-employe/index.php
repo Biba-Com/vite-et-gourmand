@@ -223,6 +223,7 @@ $flashError    = $flashError    ?? null;
 
                             <div class="employe__avis-actions">
                                 <form method="POST" action="/espace-employe/?tab=avis" style="display:inline;">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(AuthController::generateCsrfToken(), ENT_QUOTES, 'UTF-8') ?>">
                                     <input type="hidden" name="action" value="approve_avis">
                                     <input type="hidden" name="id_avis" value="<?= $avis['id_avis'] ?>">
                                     <button type="submit" class="btn btn--primary btn--sm">
@@ -230,6 +231,7 @@ $flashError    = $flashError    ?? null;
                                     </button>
                                 </form>
                                 <form method="POST" action="/espace-employe/?tab=avis" style="display:inline;">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(AuthController::generateCsrfToken(), ENT_QUOTES, 'UTF-8') ?>">
                                     <input type="hidden" name="action" value="reject_avis">
                                     <input type="hidden" name="id_avis" value="<?= $avis['id_avis'] ?>">
                                     <button type="submit" class="btn btn--ghost btn--sm employe__btn-cancel">
@@ -254,6 +256,7 @@ $flashError    = $flashError    ?? null;
         <h2 class="employe-modal__title" id="modal-title">Mettre à jour le statut</h2>
 
         <form method="POST" action="/espace-employe/?tab=commandes">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(AuthController::generateCsrfToken(), ENT_QUOTES, 'UTF-8') ?>">
             <input type="hidden" name="action" value="update_statut">
             <input type="hidden" name="id_commande" id="modal-id-commande" value="">
             <input type="hidden" name="nouveau_statut" id="modal-nouveau-statut" value="">
